@@ -1,5 +1,5 @@
 import { ListType, AlignType, DirectionType, ScriptType } from './value-types';
-import { IMention } from "./mentions/MentionSanitizer";
+import { IMention } from './mentions/MentionSanitizer';
 interface IOpAttributes {
     background?: string | undefined;
     color?: string | undefined;
@@ -15,7 +15,7 @@ interface IOpAttributes {
     code?: boolean | undefined;
     list?: ListType;
     blockquote?: boolean | undefined;
-    'code-block'?: boolean | undefined;
+    'code-block'?: string | boolean | undefined;
     header?: number | undefined;
     align?: AlignType;
     direction?: DirectionType;
@@ -43,5 +43,6 @@ declare class OpAttributeSanitizer {
     static IsValidWidth(width: string): boolean;
     static isValidTarget(target: string): boolean;
     static IsValidRel(relStr: string): boolean;
+    static IsValidLang(lang: string | boolean): boolean;
 }
 export { OpAttributeSanitizer, IOpAttributes, IOpAttributeSanitizerOptions };
