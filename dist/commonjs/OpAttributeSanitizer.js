@@ -158,7 +158,7 @@ var OpAttributeSanitizer = (function () {
         if (typeof lang === 'boolean') {
             return true;
         }
-        return !!lang.match(/^[a-zA-Z\s\-]{1,50}$/i);
+        return !!lang.match(/^[a-zA-Z\s\-\\\/\+]{1,50}$/i);
     };
     return OpAttributeSanitizer;
 }());

@@ -15,8 +15,13 @@ var DeltaInsertOp = (function () {
     };
     DeltaInsertOp.prototype.isContainerBlock = function () {
         var attrs = this.attributes;
-        return !!(attrs.blockquote || attrs.list || attrs['code-block'] ||
-            attrs.header || attrs.align || attrs.direction || attrs.indent);
+        return !!(attrs.blockquote ||
+            attrs.list ||
+            attrs['code-block'] ||
+            attrs.header ||
+            attrs.align ||
+            attrs.direction ||
+            attrs.indent);
     };
     DeltaInsertOp.prototype.isBlockquote = function () {
         return !!this.attributes.blockquote;
@@ -28,21 +33,25 @@ var DeltaInsertOp = (function () {
         return op.attributes.header === this.attributes.header && this.isHeader();
     };
     DeltaInsertOp.prototype.hasSameAdiAs = function (op) {
-        return this.attributes.align === op.attributes.align
-            && this.attributes.direction === op.attributes.direction
-            && this.attributes.indent === op.attributes.indent;
+        return (this.attributes.align === op.attributes.align &&
+            this.attributes.direction === op.attributes.direction &&
+            this.attributes.indent === op.attributes.indent);
     };
     DeltaInsertOp.prototype.hasSameIndentationAs = function (op) {
         return this.attributes.indent === op.attributes.indent;
     };
     DeltaInsertOp.prototype.hasHigherIndentThan = function (op) {
-        return (Number(this.attributes.indent) || 0) > (Number(op.attributes.indent) || 0);
+        return ((Number(this.attributes.indent) || 0) >
+            (Number(op.attributes.indent) || 0));
     };
     DeltaInsertOp.prototype.isInline = function () {
         return !(this.isContainerBlock() || this.isVideo() || this.isCustomBlock());
     };
     DeltaInsertOp.prototype.isCodeBlock = function () {
         return !!this.attributes['code-block'];
+    };
+    DeltaInsertOp.prototype.hasSameLangAs = function (op) {
+        return this.attributes['code-block'] === op.attributes['code-block'];
     };
     DeltaInsertOp.prototype.isJustNewline = function () {
         return this.insert.value === value_types_1.NewLine;
@@ -66,12 +75,13 @@ var DeltaInsertOp = (function () {
         return this.attributes.list === value_types_1.ListType.Unchecked;
     };
     DeltaInsertOp.prototype.isACheckList = function () {
-        return this.attributes.list == value_types_1.ListType.Unchecked ||
-            this.attributes.list === value_types_1.ListType.Checked;
+        return (this.attributes.list == value_types_1.ListType.Unchecked ||
+            this.attributes.list === value_types_1.ListType.Checked);
     };
     DeltaInsertOp.prototype.isSameListAs = function (op) {
-        return !!op.attributes.list && (this.attributes.list === op.attributes.list ||
-            op.isACheckList() && this.isACheckList());
+        return (!!op.attributes.list &&
+            (this.attributes.list === op.attributes.list ||
+                (op.isACheckList() && this.isACheckList())));
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;

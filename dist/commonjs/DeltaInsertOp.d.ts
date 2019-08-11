@@ -1,4 +1,4 @@
-import { IOpAttributes } from "./OpAttributeSanitizer";
+import { IOpAttributes } from './OpAttributeSanitizer';
 import { InsertData } from './InsertData';
 declare class DeltaInsertOp {
     readonly insert: InsertData;
@@ -14,6 +14,7 @@ declare class DeltaInsertOp {
     hasHigherIndentThan(op: DeltaInsertOp): boolean;
     isInline(): boolean;
     isCodeBlock(): boolean;
+    hasSameLangAs(op: DeltaInsertOp): boolean;
     isJustNewline(): boolean;
     isList(): boolean;
     isOrderedList(): boolean;
