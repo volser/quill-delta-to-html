@@ -3,13 +3,13 @@ import {
   makeEndTag,
   encodeHtml,
   ITagKeyValue
-} from './funcs-html';
-import { DeltaInsertOp } from './DeltaInsertOp';
-import { ScriptType, NewLine } from './value-types';
-import * as obj from './helpers/object';
-import { IMention } from './mentions/MentionSanitizer';
-import * as arr from './helpers/array';
-import { OpAttributeSanitizer } from './OpAttributeSanitizer';
+} from "./funcs-html";
+import { DeltaInsertOp } from "./DeltaInsertOp";
+import { ScriptType, NewLine } from "./value-types";
+import * as obj from "./helpers/object";
+import { IMention } from "./mentions/MentionSanitizer";
+import * as arr from "./helpers/array";
+import { OpAttributeSanitizer } from "./OpAttributeSanitizer";
 
 export type InlineStyleType =
   | ((value: string, op: DeltaInsertOp) => string | undefined)
@@ -24,26 +24,26 @@ export interface IInlineStyles {
 }
 
 const DEFAULT_INLINE_FONTS: { [key: string]: string } = {
-  serif: 'font-family: Georgia, Times New Roman, serif',
-  monospace: 'font-family: Monaco, Courier New, monospace'
+  serif: "font-family: Georgia, Times New Roman, serif",
+  monospace: "font-family: Monaco, Courier New, monospace"
 };
 
 export const DEFAULT_INLINE_STYLES: IInlineStyles = {
-  font: value => DEFAULT_INLINE_FONTS[value] || 'font-family:' + value,
+  font: value => DEFAULT_INLINE_FONTS[value] || "font-family:" + value,
   size: {
-    small: 'font-size: 0.75em',
-    large: 'font-size: 1.5em',
-    huge: 'font-size: 2.5em'
+    small: "font-size: 0.75em",
+    large: "font-size: 1.5em",
+    huge: "font-size: 2.5em"
   },
   indent: (value, op) => {
     var indentSize = parseInt(value, 10) * 3;
-    var side = op.attributes['direction'] === 'rtl' ? 'right' : 'left';
-    return 'padding-' + side + ':' + indentSize + 'em';
+    var side = op.attributes["direction"] === "rtl" ? "right" : "left";
+    return "padding-" + side + ":" + indentSize + "em";
   },
   direction: (value, op) => {
-    if (value === 'rtl') {
+    if (value === "rtl") {
       return (
-        'direction:rtl' + (op.attributes['align'] ? '' : '; text-align:inherit')
+        "direction:rtl" + (op.attributes["align"] ? "" : "; text-align:inherit")
       );
     } else {
       return undefined;
@@ -77,11 +77,11 @@ class OpToHtmlConverter {
     this.options = obj.assign(
       {},
       {
-        classPrefix: 'ql',
+        classPrefix: "ql",
         inlineStyles: undefined,
         encodeHtml: true,
-        listItemTag: 'li',
-        paragraphTag: 'p'
+        listItemTag: "li",
+        paragraphTag: "p"
       },
       options
     );
@@ -89,9 +89,9 @@ class OpToHtmlConverter {
 
   prefixClass(className: string): string {
     if (!this.options.classPrefix) {
-      return className + '';
+      return className + "";
     }
-    return this.options.classPrefix + '-' + className;
+    return this.options.classPrefix + "-" + className;
   }
 
   getHtml(): string {
@@ -101,29 +101,29 @@ class OpToHtmlConverter {
 
   getHtmlParts(): IHtmlParts {
     if (this.op.isJustNewline() && !this.op.isContainerBlock()) {
-      return { openingTag: '', closingTag: '', content: NewLine };
+      return { openingTag: "", closingTag: "", content: NewLine };
     }
 
     let tags = this.getTags(),
       attrs = this.getTagAttributes();
 
     if (!tags.length && attrs.length) {
-      tags.push('span');
+      tags.push("span");
     }
 
     let beginTags = [],
       endTags = [];
-    const imgTag = 'img';
+    const imgTag = "img";
     const isImageLink = (tag: any) =>
       tag === imgTag && !!this.op.attributes.link;
     for (var tag of tags) {
       if (isImageLink(tag)) {
-        beginTags.push(makeStartTag('a', this.getLinkAttrs()));
+        beginTags.push(makeStartTag("a", this.getLinkAttrs()));
       }
       beginTags.push(makeStartTag(tag, attrs));
-      endTags.push(tag === 'img' ? '' : makeEndTag(tag));
+      endTags.push(tag === "img" ? "" : makeEndTag(tag));
       if (isImageLink(tag)) {
-        endTags.push(makeEndTag('a'));
+        endTags.push(makeEndTag("a"));
       }
       // consumed in first tag
       attrs = [];
@@ -131,15 +131,15 @@ class OpToHtmlConverter {
     endTags.reverse();
 
     return {
-      openingTag: beginTags.join(''),
+      openingTag: beginTags.join(""),
       content: this.getContent(),
-      closingTag: endTags.join('')
+      closingTag: endTags.join("")
     };
   }
 
   getContent(): string {
     if (this.op.isContainerBlock()) {
-      return '';
+      return "";
     }
 
     if (this.op.isMentions()) {
@@ -147,7 +147,7 @@ class OpToHtmlConverter {
     }
 
     var content =
-      this.op.isFormula() || this.op.isText() ? this.op.insert.value : '';
+      this.op.isFormula() || this.op.isText() ? this.op.insert.value : "";
 
     return (this.options.encodeHtml && encodeHtml(content)) || content;
   }
@@ -161,38 +161,38 @@ class OpToHtmlConverter {
       return [];
     }
 
-    var propsArr = ['indent', 'align', 'direction', 'font', 'size'];
+    var propsArr = ["indent", "align", "direction", "font", "size"];
     if (this.options.allowBackgroundClasses) {
-      propsArr.push('background');
+      propsArr.push("background");
     }
     return propsArr
       .filter(prop => !!attrs[prop])
       .filter(prop =>
-        prop === 'background'
+        prop === "background"
           ? OpAttributeSanitizer.IsValidColorLiteral(attrs[prop])
           : true
       )
-      .map(prop => prop + '-' + attrs[prop])
-      .concat(this.op.isFormula() ? 'formula' : [])
-      .concat(this.op.isVideo() ? 'video' : [])
-      .concat(this.op.isImage() ? 'image' : [])
+      .map(prop => prop + "-" + attrs[prop])
+      .concat(this.op.isFormula() ? "formula" : [])
+      .concat(this.op.isVideo() ? "video" : [])
+      .concat(this.op.isImage() ? "image" : [])
       .map(<Str2StrType>this.prefixClass.bind(this));
   }
 
   getCssStyles(): string[] {
     var attrs: any = this.op.attributes;
 
-    var propsArr = [['color']];
+    var propsArr = [["color"]];
     if (!!this.options.inlineStyles || !this.options.allowBackgroundClasses) {
-      propsArr.push(['background', 'background-color']);
+      propsArr.push(["background", "background-color"]);
     }
     if (this.options.inlineStyles) {
       propsArr = propsArr.concat([
-        ['indent'],
-        ['align', 'text-align'],
-        ['direction'],
-        ['font', 'font-family'],
-        ['size']
+        ["indent"],
+        ["align", "text-align"],
+        ["direction"],
+        ["font", "font-family"],
+        ["size"]
       ]);
     }
 
@@ -207,16 +207,16 @@ class OpToHtmlConverter {
             (this.options.inlineStyles as any)[attribute]) ||
           (DEFAULT_INLINE_STYLES as any)[attribute];
 
-        if (typeof attributeConverter === 'object') {
+        if (typeof attributeConverter === "object") {
           return attributeConverter[attrValue];
-        } else if (typeof attributeConverter === 'function') {
+        } else if (typeof attributeConverter === "function") {
           var converterFn = attributeConverter as ((
             value: string,
             op: DeltaInsertOp
           ) => string);
           return converterFn(attrValue, this.op);
         } else {
-          return arr.preferSecond(item) + ':' + attrValue;
+          return arr.preferSecond(item) + ":" + attrValue;
         }
       })
       .filter(item => item !== undefined);
@@ -229,19 +229,19 @@ class OpToHtmlConverter {
 
     const makeAttr = this.makeAttr.bind(this);
     var classes = this.getCssClasses();
-    var tagAttrs = classes.length ? [makeAttr('class', classes.join(' '))] : [];
+    var tagAttrs = classes.length ? [makeAttr("class", classes.join(" "))] : [];
 
     if (this.op.isImage()) {
       this.op.attributes.width &&
         (tagAttrs = tagAttrs.concat(
-          makeAttr('width', this.op.attributes.width)
+          makeAttr("width", this.op.attributes.width)
         ));
-      return tagAttrs.concat(makeAttr('src', this.op.insert.value));
+      return tagAttrs.concat(makeAttr("src", this.op.insert.value));
     }
 
     if (this.op.isACheckList()) {
       return tagAttrs.concat(
-        makeAttr('data-checked', this.op.isCheckedList() ? 'true' : 'false')
+        makeAttr("data-checked", this.op.isCheckedList() ? "true" : "false")
       );
     }
 
@@ -251,41 +251,41 @@ class OpToHtmlConverter {
 
     if (this.op.isVideo()) {
       return tagAttrs.concat(
-        makeAttr('frameborder', '0'),
-        makeAttr('allowfullscreen', 'true'),
-        makeAttr('src', this.op.insert.value)
+        makeAttr("frameborder", "0"),
+        makeAttr("allowfullscreen", "true"),
+        makeAttr("src", this.op.insert.value)
       );
     }
 
     if (this.op.isMentions()) {
       var mention: IMention = this.op.attributes.mention!;
       if (mention.class) {
-        tagAttrs = tagAttrs.concat(makeAttr('class', mention.class));
+        tagAttrs = tagAttrs.concat(makeAttr("class", mention.class));
       }
-      if (mention['end-point'] && mention.slug) {
+      if (mention["end-point"] && mention.slug) {
         tagAttrs = tagAttrs.concat(
-          makeAttr('href', mention['end-point'] + '/' + mention.slug)
+          makeAttr("href", mention["end-point"] + "/" + mention.slug)
         );
       } else {
-        tagAttrs = tagAttrs.concat(makeAttr('href', 'about:blank'));
+        tagAttrs = tagAttrs.concat(makeAttr("href", "about:blank"));
       }
       if (mention.target) {
-        tagAttrs = tagAttrs.concat(makeAttr('target', mention.target));
+        tagAttrs = tagAttrs.concat(makeAttr("target", mention.target));
       }
       return tagAttrs;
     }
 
     var styles = this.getCssStyles();
     if (styles.length) {
-      tagAttrs.push(makeAttr('style', styles.join(';')));
+      tagAttrs.push(makeAttr("style", styles.join(";")));
     }
 
     if (
       this.op.isCodeBlock() &&
-      typeof this.op.attributes['code-block'] === 'string'
+      typeof this.op.attributes["code-block"] === "string"
     ) {
       return tagAttrs.concat(
-        makeAttr('data-language', this.op.attributes['code-block'])
+        makeAttr("data-language", this.op.attributes["code-block"])
       );
     }
 
@@ -308,11 +308,11 @@ class OpToHtmlConverter {
     let tagAttrs: ITagKeyValue[] = [];
 
     let targetForAll = OpAttributeSanitizer.isValidTarget(
-      this.options.linkTarget || ''
+      this.options.linkTarget || ""
     )
       ? this.options.linkTarget
       : undefined;
-    let relForAll = OpAttributeSanitizer.IsValidRel(this.options.linkRel || '')
+    let relForAll = OpAttributeSanitizer.IsValidRel(this.options.linkRel || "")
       ? this.options.linkRel
       : undefined;
 
@@ -320,9 +320,9 @@ class OpToHtmlConverter {
     let rel = this.op.attributes.rel || relForAll;
 
     return tagAttrs
-      .concat(this.makeAttr('href', this.op.attributes.link!))
-      .concat(target ? this.makeAttr('target', target) : [])
-      .concat(rel ? this.makeAttr('rel', rel) : []);
+      .concat(this.makeAttr("href", this.op.attributes.link!))
+      .concat(target ? this.makeAttr("target", target) : [])
+      .concat(rel ? this.makeAttr("rel", rel) : []);
   }
 
   getTags(): string[] {
@@ -331,48 +331,48 @@ class OpToHtmlConverter {
     // embeds
     if (!this.op.isText()) {
       return [
-        this.op.isVideo() ? 'iframe' : this.op.isImage() ? 'img' : 'span' // formula
+        this.op.isVideo() ? "iframe" : this.op.isImage() ? "img" : "span" // formula
       ];
     }
 
     // blocks
-    var positionTag = this.options.paragraphTag || 'p';
+    var positionTag = this.options.paragraphTag || "p";
 
     var blocks = [
-      ['blockquote'],
-      ['code-block', 'pre'],
-      ['list', this.options.listItemTag],
-      ['header'],
-      ['align', positionTag],
-      ['direction', positionTag],
-      ['indent', positionTag]
+      ["blockquote"],
+      ["code-block", "pre"],
+      ["list", this.options.listItemTag],
+      ["header"],
+      ["align", positionTag],
+      ["direction", positionTag],
+      ["indent", positionTag]
     ];
     for (var item of blocks) {
       var firstItem = item[0]!;
       if (attrs[firstItem]) {
-        return firstItem === 'header'
-          ? ['h' + attrs[firstItem]]
+        return firstItem === "header"
+          ? ["h" + attrs[firstItem]]
           : [arr.preferSecond(item)!];
       }
     }
 
     // inlines
     return [
-      ['link', 'a'],
-      ['mentions', 'a'],
-      ['script'],
-      ['bold', 'strong'],
-      ['italic', 'em'],
-      ['strike', 's'],
-      ['underline', 'u'],
-      ['code']
+      ["link", "a"],
+      ["mentions", "a"],
+      ["script"],
+      ["bold", "strong"],
+      ["italic", "em"],
+      ["strike", "s"],
+      ["underline", "u"],
+      ["code"]
     ]
       .filter((item: string[]) => !!attrs[item[0]])
       .map(item => {
-        return item[0] === 'script'
+        return item[0] === "script"
           ? attrs[item[0]] === ScriptType.Sub
-            ? 'sub'
-            : 'sup'
+            ? "sub"
+            : "sup"
           : arr.preferSecond(item)!;
       });
   }

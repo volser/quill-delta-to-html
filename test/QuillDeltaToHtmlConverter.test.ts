@@ -1,30 +1,30 @@
-import 'mocha';
-import * as assert from 'assert';
+import "mocha";
+import * as assert from "assert";
 
-import { DeltaInsertOp } from './../src/DeltaInsertOp';
-import { QuillDeltaToHtmlConverter } from './../src/QuillDeltaToHtmlConverter';
-import { callWhenXEqualY } from './_helper';
+import { DeltaInsertOp } from "./../src/DeltaInsertOp";
+import { QuillDeltaToHtmlConverter } from "./../src/QuillDeltaToHtmlConverter";
+import { callWhenXEqualY } from "./_helper";
 
-import { delta1 } from './data/delta1';
-import { GroupType, ListType } from './../src/value-types';
-import { encodeHtml } from './../src/funcs-html';
+import { delta1 } from "./data/delta1";
+import { GroupType, ListType } from "./../src/value-types";
+import { encodeHtml } from "./../src/funcs-html";
 
-describe('QuillDeltaToHtmlConverter', function() {
-  describe('constructor()', function() {
+describe("QuillDeltaToHtmlConverter", function() {
+  describe("constructor()", function() {
     var hugeOps = [
-      { insert: 'huge', attributes: { size: 'huge' } },
-      { insert: '\n' }
+      { insert: "huge", attributes: { size: "huge" } },
+      { insert: "\n" }
     ];
 
-    it('should instantiate return proper html', function() {
+    it("should instantiate return proper html", function() {
       var qdc = new QuillDeltaToHtmlConverter(delta1.ops, {
-        classPrefix: 'noz'
+        classPrefix: "noz"
       });
       var html = qdc.convert();
       assert.equal(html, delta1.html);
     });
 
-    it('should set default inline styles for `inlineStyles: true`', function() {
+    it("should set default inline styles for `inlineStyles: true`", function() {
       var qdc = new QuillDeltaToHtmlConverter(hugeOps, { inlineStyles: true });
       var html = qdc.convert();
       assert.equal(
@@ -34,7 +34,7 @@ describe('QuillDeltaToHtmlConverter', function() {
       );
     });
 
-    it('should set default inline styles when `inlineStyles` is a truthy non-object', function() {
+    it("should set default inline styles when `inlineStyles` is a truthy non-object", function() {
       var qdc = new QuillDeltaToHtmlConverter(hugeOps, {
         inlineStyles: 1
       } as any);
@@ -46,11 +46,11 @@ describe('QuillDeltaToHtmlConverter', function() {
       );
     });
 
-    it('should allow setting inline styles', function() {
+    it("should allow setting inline styles", function() {
       var qdc = new QuillDeltaToHtmlConverter(hugeOps, {
         inlineStyles: {
           size: {
-            huge: 'font-size: 6em'
+            huge: "font-size: 6em"
           }
         }
       });
@@ -63,34 +63,34 @@ describe('QuillDeltaToHtmlConverter', function() {
     });
   });
 
-  describe('convert()', function() {
+  describe("convert()", function() {
     var ops2 = [
-      { insert: 'this is text' },
-      { insert: '\n' },
-      { insert: 'this is code' },
-      { insert: '\n', attributes: { 'code-block': true } },
-      { insert: 'this is code TOO!' },
-      { insert: '\n', attributes: { 'code-block': true } }
+      { insert: "this is text" },
+      { insert: "\n" },
+      { insert: "this is code" },
+      { insert: "\n", attributes: { "code-block": true } },
+      { insert: "this is code TOO!" },
+      { insert: "\n", attributes: { "code-block": true } }
     ];
 
-    it('should render html', function() {
+    it("should render html", function() {
       var qdc = new QuillDeltaToHtmlConverter(ops2);
 
       var html = qdc.convert();
-      assert.equal(html.indexOf('<pre>this is code') > -1, true, html);
+      assert.equal(html.indexOf("<pre>this is code") > -1, true, html);
     });
 
-    it('should render mention', function() {
+    it("should render mention", function() {
       let ops = [
         {
-          insert: 'mention',
+          insert: "mention",
           attributes: {
             mentions: true,
             mention: {
-              'end-point': 'http://abc.com',
-              slug: 'a',
-              class: 'abc',
-              target: '_blank'
+              "end-point": "http://abc.com",
+              slug: "a",
+              class: "abc",
+              target: "_blank"
             }
           }
         }
@@ -102,43 +102,43 @@ describe('QuillDeltaToHtmlConverter', function() {
         [
           '<p><a class="abc"',
           ' href="http://abc.com/a" target="_blank"',
-          '>mention</a></p>'
-        ].join('')
+          ">mention</a></p>"
+        ].join("")
       );
 
       var qdc = new QuillDeltaToHtmlConverter([
         {
-          insert: 'mention',
+          insert: "mention",
           attributes: {
             mentions: true,
-            mention: { slug: 'aa' }
+            mention: { slug: "aa" }
           }
         }
       ]);
       var html = qdc.convert();
       assert.equal(
         html,
-        ['<p><a', ' href="about:blank">mention</a></p>'].join('')
+        ["<p><a", ' href="about:blank">mention</a></p>'].join("")
       );
     });
-    it('should render links with rels', function() {
+    it("should render links with rels", function() {
       var ops = [
         {
           attributes: {
-            link: '#',
-            rel: 'nofollow noopener'
+            link: "#",
+            rel: "nofollow noopener"
           },
-          insert: 'external link'
+          insert: "external link"
         },
         {
           attributes: {
-            link: '#'
+            link: "#"
           },
-          insert: 'internal link'
+          insert: "internal link"
         }
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops, {
-        linkRel: 'license'
+        linkRel: "license"
       });
       var html = qdc.convert();
       assert.equal(
@@ -153,12 +153,12 @@ describe('QuillDeltaToHtmlConverter', function() {
         '<p><a href="#" target="_blank" rel="nofollow noopener">external link</a><a href="#" target="_blank">internal link</a></p>'
       );
     });
-    it('should render image and image links', function() {
+    it("should render image and image links", function() {
       let ops = [
-        { insert: { image: 'http://yahoo.com/abc.jpg' } },
+        { insert: { image: "http://yahoo.com/abc.jpg" } },
         {
-          insert: { image: 'http://yahoo.com/def.jpg' },
-          attributes: { link: 'http://aha' }
+          insert: { image: "http://yahoo.com/def.jpg" },
+          attributes: { link: "http://aha" }
         }
       ];
       let qdc = new QuillDeltaToHtmlConverter(ops);
@@ -166,34 +166,34 @@ describe('QuillDeltaToHtmlConverter', function() {
       assert.equal(
         html,
         [
-          '<p>',
+          "<p>",
           '<img class="ql-image" src="http://yahoo.com/abc.jpg"/>',
           '<a href="http://aha" target="_blank">',
           '<img class="ql-image" src="http://yahoo.com/def.jpg"/>',
-          '</a>',
-          '</p>'
-        ].join('')
+          "</a>",
+          "</p>"
+        ].join("")
       );
     });
 
-    it('should open and close list tags', function() {
+    it("should open and close list tags", function() {
       var ops4 = [
-        { insert: 'mr\n' },
-        { insert: 'hello' },
-        { insert: '\n', attributes: { list: 'ordered' } },
-        { insert: 'there' },
-        { insert: '\n', attributes: { list: 'bullet' } },
-        { insert: '\n', attributes: { list: 'ordered' } }
+        { insert: "mr\n" },
+        { insert: "hello" },
+        { insert: "\n", attributes: { list: "ordered" } },
+        { insert: "there" },
+        { insert: "\n", attributes: { list: "bullet" } },
+        { insert: "\n", attributes: { list: "ordered" } }
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops4);
       var html = qdc.convert();
 
-      assert.equal(html.indexOf('<p>mr') > -1, true);
-      assert.equal(html.indexOf('</ol><ul><li>there') > -1, true);
+      assert.equal(html.indexOf("<p>mr") > -1, true);
+      assert.equal(html.indexOf("</ol><ul><li>there") > -1, true);
     });
 
-    it('should render as separate paragraphs', function() {
-      var ops4 = [{ insert: 'hello\nhow areyou?\n\nbye' }];
+    it("should render as separate paragraphs", function() {
+      var ops4 = [{ insert: "hello\nhow areyou?\n\nbye" }];
       var qdc = new QuillDeltaToHtmlConverter(ops4, {
         multiLineParagraph: false
       });
@@ -201,45 +201,45 @@ describe('QuillDeltaToHtmlConverter', function() {
 
       assert.equal(
         html,
-        '<p>hello</p><p>how areyou?</p><p><br/></p><p>bye</p>'
+        "<p>hello</p><p>how areyou?</p><p><br/></p><p>bye</p>"
       );
     });
 
-    it('should create checked/unchecked lists', function() {
+    it("should create checked/unchecked lists", function() {
       var ops4 = [
-        { insert: 'hello' },
-        { insert: '\n', attributes: { list: 'checked' } },
-        { insert: 'there' },
-        { insert: '\n', attributes: { list: 'unchecked' } },
-        { insert: 'man' },
-        { insert: '\n', attributes: { list: 'checked' } },
-        { insert: 'not done' },
-        { insert: '\n', attributes: { indent: 1, list: 'unchecked' } }
+        { insert: "hello" },
+        { insert: "\n", attributes: { list: "checked" } },
+        { insert: "there" },
+        { insert: "\n", attributes: { list: "unchecked" } },
+        { insert: "man" },
+        { insert: "\n", attributes: { list: "checked" } },
+        { insert: "not done" },
+        { insert: "\n", attributes: { indent: 1, list: "unchecked" } }
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops4);
       var html = qdc.convert();
       assert.equal(
         html,
         [
-          '<ul>',
+          "<ul>",
           '<li data-checked="true">hello</li>',
           '<li data-checked="false">there</li>',
           '<li data-checked="true">man',
           '<ul><li data-checked="false">not done</li></ul>',
-          '</li>',
-          '</ul>'
-        ].join('')
+          "</li>",
+          "</ul>"
+        ].join("")
       );
     });
 
-    it('should wrap positional styles in right tag', function() {
+    it("should wrap positional styles in right tag", function() {
       var ops4 = [
-        { insert: 'mr' },
-        { insert: '\n', attributes: { align: 'center' } },
-        { insert: '\n', attributes: { direction: 'rtl' } },
-        { insert: '\n', attributes: { indent: 2 } }
+        { insert: "mr" },
+        { insert: "\n", attributes: { align: "center" } },
+        { insert: "\n", attributes: { direction: "rtl" } },
+        { insert: "\n", attributes: { indent: 2 } }
       ];
-      var qdc = new QuillDeltaToHtmlConverter(ops4, { paragraphTag: 'div' });
+      var qdc = new QuillDeltaToHtmlConverter(ops4, { paragraphTag: "div" });
       var html = qdc.convert();
       assert.equal(html.indexOf('<div class="ql-align') > -1, true);
       assert.equal(html.indexOf('<div class="ql-direction') > -1, true);
@@ -251,14 +251,14 @@ describe('QuillDeltaToHtmlConverter', function() {
       assert.equal(html.indexOf('<p class="ql-direction') > -1, true);
       assert.equal(html.indexOf('<p class="ql-indent') > -1, true);
     });
-    it('should render target attr correctly', () => {
+    it("should render target attr correctly", () => {
       let ops = [
-        { attributes: { target: '_self', link: 'http://#' }, insert: 'A' },
-        { attributes: { target: '_blank', link: 'http://#' }, insert: 'B' },
-        { attributes: { link: 'http://#' }, insert: 'C' },
-        { insert: '\n' }
+        { attributes: { target: "_self", link: "http://#" }, insert: "A" },
+        { attributes: { target: "_blank", link: "http://#" }, insert: "B" },
+        { attributes: { link: "http://#" }, insert: "C" },
+        { insert: "\n" }
       ];
-      let qdc = new QuillDeltaToHtmlConverter(ops, { linkTarget: '' });
+      let qdc = new QuillDeltaToHtmlConverter(ops, { linkTarget: "" });
       let html = qdc.convert();
       assert.equal(
         html,
@@ -266,7 +266,7 @@ describe('QuillDeltaToHtmlConverter', function() {
           `<p><a href="http://#" target="_self">A</a>`,
           `<a href="http://#" target="_blank">B</a>`,
           `<a href="http://#">C</a></p>`
-        ].join('')
+        ].join("")
       );
 
       qdc = new QuillDeltaToHtmlConverter(ops);
@@ -277,10 +277,10 @@ describe('QuillDeltaToHtmlConverter', function() {
           `<p><a href="http://#" target="_self">A</a>`,
           `<a href="http://#" target="_blank">B</a>`,
           `<a href="http://#" target="_blank">C</a></p>`
-        ].join('')
+        ].join("")
       );
 
-      qdc = new QuillDeltaToHtmlConverter(ops, { linkTarget: '_top' });
+      qdc = new QuillDeltaToHtmlConverter(ops, { linkTarget: "_top" });
       html = qdc.convert();
       assert.equal(
         html,
@@ -288,19 +288,19 @@ describe('QuillDeltaToHtmlConverter', function() {
           `<p><a href="http://#" target="_self">A</a>`,
           `<a href="http://#" target="_blank">B</a>`,
           `<a href="http://#" target="_top">C</a></p>`
-        ].join('')
+        ].join("")
       );
     });
 
-    it('should convert using custom url sanitizer', () => {
+    it("should convert using custom url sanitizer", () => {
       let ops = [
-        { attributes: { link: 'http://yahoo<%=abc%>/ed' }, insert: 'test' },
-        { attributes: { link: 'http://abc<' }, insert: 'hi' }
+        { attributes: { link: "http://yahoo<%=abc%>/ed" }, insert: "test" },
+        { attributes: { link: "http://abc<" }, insert: "hi" }
       ];
 
       let qdc = new QuillDeltaToHtmlConverter(ops, {
         urlSanitizer: (link: string) => {
-          if (link.indexOf('<%') > -1) {
+          if (link.indexOf("<%") > -1) {
             return link;
           }
           return undefined;
@@ -311,259 +311,259 @@ describe('QuillDeltaToHtmlConverter', function() {
         [
           `<p><a href="http://yahoo<%=abc%>/ed" target="_blank">test</a>`,
           `<a href="http://abc&lt;" target="_blank">hi</a></p>`
-        ].join('')
+        ].join("")
       );
     });
   });
 
-  describe('custom types', () => {
+  describe("custom types", () => {
     it(`should return empty string if renderer not defined for
                            custom blot`, () => {
-      let ops = [{ insert: { customstuff: 'my val' } }];
+      let ops = [{ insert: { customstuff: "my val" } }];
       let qdc = new QuillDeltaToHtmlConverter(ops);
-      assert.equal(qdc.convert(), '<p></p>');
+      assert.equal(qdc.convert(), "<p></p>");
     });
-    it('should render custom insert types with given renderer', () => {
+    it("should render custom insert types with given renderer", () => {
       let ops = [
-        { insert: { bolditalic: 'my text' } },
+        { insert: { bolditalic: "my text" } },
         { insert: { blah: 1 } }
       ];
       let qdc = new QuillDeltaToHtmlConverter(ops);
       qdc.renderCustomWith(op => {
-        if (op.insert.type === 'bolditalic') {
-          return '<b><i>' + op.insert.value + '</i></b>';
+        if (op.insert.type === "bolditalic") {
+          return "<b><i>" + op.insert.value + "</i></b>";
         }
-        return 'unknown';
+        return "unknown";
       });
       let html = qdc.convert();
-      assert.equal(html, '<p><b><i>my text</i></b>unknown</p>');
+      assert.equal(html, "<p><b><i>my text</i></b>unknown</p>");
     });
 
-    it('should render custom insert types as blocks if renderAsBlock is specified', () => {
+    it("should render custom insert types as blocks if renderAsBlock is specified", () => {
       let ops = [
-        { insert: 'hello ' },
-        { insert: { myblot: 'my friend' } },
-        { insert: '!' },
-        { insert: { myblot: 'how r u?' }, attributes: { renderAsBlock: true } }
+        { insert: "hello " },
+        { insert: { myblot: "my friend" } },
+        { insert: "!" },
+        { insert: { myblot: "how r u?" }, attributes: { renderAsBlock: true } }
       ];
       let qdc = new QuillDeltaToHtmlConverter(ops);
       qdc.renderCustomWith(op => {
-        if (op.insert.type === 'myblot') {
+        if (op.insert.type === "myblot") {
           return op.attributes.renderAsBlock
-            ? '<div>' + op.insert.value + '</div>'
+            ? "<div>" + op.insert.value + "</div>"
             : op.insert.value;
         }
-        return 'unknown';
+        return "unknown";
       });
       let html = qdc.convert();
-      assert.equal(html, '<p>hello my friend!</p><div>how r u?</div>');
+      assert.equal(html, "<p>hello my friend!</p><div>how r u?</div>");
     });
 
-    it('should render custom insert types in code blocks with given renderer', () => {
+    it("should render custom insert types in code blocks with given renderer", () => {
       let ops = [
-        { insert: { colonizer: ':' } },
-        { insert: '\n', attributes: { 'code-block': true } },
-        { insert: 'code1' },
-        { insert: '\n', attributes: { 'code-block': true } },
-        { insert: { colonizer: ':' } },
-        { insert: '\n', attributes: { 'code-block': true } }
+        { insert: { colonizer: ":" } },
+        { insert: "\n", attributes: { "code-block": true } },
+        { insert: "code1" },
+        { insert: "\n", attributes: { "code-block": true } },
+        { insert: { colonizer: ":" } },
+        { insert: "\n", attributes: { "code-block": true } }
       ];
       let renderer = (op: DeltaInsertOp) => {
-        if (op.insert.type === 'colonizer') {
+        if (op.insert.type === "colonizer") {
           return op.insert.value;
         }
-        return '';
+        return "";
       };
       let qdc = new QuillDeltaToHtmlConverter(ops.slice(0, 2));
       qdc.renderCustomWith(renderer);
-      assert.equal(qdc.convert(), '<pre>:</pre>');
+      assert.equal(qdc.convert(), "<pre>:</pre>");
 
       qdc = new QuillDeltaToHtmlConverter(ops);
       qdc.renderCustomWith(renderer);
-      assert.equal(qdc.convert(), '<pre>:\ncode1\n:</pre>');
+      assert.equal(qdc.convert(), "<pre>:\ncode1\n:</pre>");
     });
 
-    it('should render custom insert types in headers with given renderer', () => {
+    it("should render custom insert types in headers with given renderer", () => {
       let ops = [
-        { insert: { colonizer: ':' } },
-        { insert: '\n', attributes: { header: 1 } },
-        { insert: 'hello' },
-        { insert: '\n', attributes: { header: 1 } },
-        { insert: { colonizer: ':' } },
-        { insert: '\n', attributes: { header: 1 } }
+        { insert: { colonizer: ":" } },
+        { insert: "\n", attributes: { header: 1 } },
+        { insert: "hello" },
+        { insert: "\n", attributes: { header: 1 } },
+        { insert: { colonizer: ":" } },
+        { insert: "\n", attributes: { header: 1 } }
       ];
       let renderer = (op: DeltaInsertOp) => {
-        if (op.insert.type === 'colonizer') {
+        if (op.insert.type === "colonizer") {
           return op.insert.value;
         }
-        return '';
+        return "";
       };
       let qdc = new QuillDeltaToHtmlConverter(ops.slice(0, 2));
       qdc.renderCustomWith(renderer);
-      assert.equal(qdc.convert(), '<h1>:</h1>');
+      assert.equal(qdc.convert(), "<h1>:</h1>");
 
       qdc = new QuillDeltaToHtmlConverter(ops);
       qdc.renderCustomWith(renderer);
-      assert.equal(qdc.convert(), '<h1>:<br/>hello<br/>:</h1>');
+      assert.equal(qdc.convert(), "<h1>:<br/>hello<br/>:</h1>");
     });
   });
 
-  describe('_getListTag()', function() {
-    it('should return proper list tag', function() {
-      var op = new DeltaInsertOp('\n', { list: ListType.Ordered });
+  describe("_getListTag()", function() {
+    it("should return proper list tag", function() {
+      var op = new DeltaInsertOp("\n", { list: ListType.Ordered });
       var qdc = new QuillDeltaToHtmlConverter(delta1.ops);
-      assert.equal(qdc._getListTag(op), 'ol');
+      assert.equal(qdc._getListTag(op), "ol");
 
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
-      assert.equal(qdc._getListTag(op), 'ul');
+      var op = new DeltaInsertOp("\n", { list: ListType.Bullet });
+      assert.equal(qdc._getListTag(op), "ul");
 
-      var op = new DeltaInsertOp('\n', { list: ListType.Checked });
-      assert.equal(qdc._getListTag(op), 'ul');
+      var op = new DeltaInsertOp("\n", { list: ListType.Checked });
+      assert.equal(qdc._getListTag(op), "ul");
 
-      var op = new DeltaInsertOp('\n', { list: ListType.Unchecked });
-      assert.equal(qdc._getListTag(op), 'ul');
+      var op = new DeltaInsertOp("\n", { list: ListType.Unchecked });
+      assert.equal(qdc._getListTag(op), "ul");
 
-      var op = new DeltaInsertOp('d');
-      assert.equal(qdc._getListTag(op), '');
+      var op = new DeltaInsertOp("d");
+      assert.equal(qdc._getListTag(op), "");
     });
   });
 
-  describe(' prepare data before inline and block renders', function() {
+  describe(" prepare data before inline and block renders", function() {
     var ops: any;
     beforeEach(function() {
       ops = [
-        { insert: 'Hello' },
-        { insert: ' my ', attributes: { italic: true } },
-        { insert: '\n', attributes: { italic: true } },
-        { insert: ' name is joey' }
+        { insert: "Hello" },
+        { insert: " my ", attributes: { italic: true } },
+        { insert: "\n", attributes: { italic: true } },
+        { insert: " name is joey" }
       ].map((v: any) => new DeltaInsertOp(v.insert, v.attributes));
     });
 
-    describe('renderInlines()', function() {
-      it('should render inlines', function() {
+    describe("renderInlines()", function() {
+      it("should render inlines", function() {
         var qdc = new QuillDeltaToHtmlConverter([]);
         var inlines = qdc._renderInlines(ops);
         assert.equal(
           inlines,
-          ['<p>Hello', '<em> my </em><br/> name is joey</p>'].join('')
+          ["<p>Hello", "<em> my </em><br/> name is joey</p>"].join("")
         );
 
-        qdc = new QuillDeltaToHtmlConverter([], { paragraphTag: 'div' });
+        qdc = new QuillDeltaToHtmlConverter([], { paragraphTag: "div" });
         var inlines = qdc._renderInlines(ops);
         assert.equal(
           inlines,
-          '<div>Hello<em> my </em><br/> name is joey</div>'
+          "<div>Hello<em> my </em><br/> name is joey</div>"
         );
 
-        qdc = new QuillDeltaToHtmlConverter([], { paragraphTag: '' });
+        qdc = new QuillDeltaToHtmlConverter([], { paragraphTag: "" });
         var inlines = qdc._renderInlines(ops);
-        assert.equal(inlines, 'Hello<em> my </em><br/> name is joey');
+        assert.equal(inlines, "Hello<em> my </em><br/> name is joey");
       });
 
-      it('should render plain new line string', function() {
-        var ops = [new DeltaInsertOp('\n')];
+      it("should render plain new line string", function() {
+        var ops = [new DeltaInsertOp("\n")];
         var qdc = new QuillDeltaToHtmlConverter([]);
-        assert.equal(qdc._renderInlines(ops), '<p><br/></p>');
+        assert.equal(qdc._renderInlines(ops), "<p><br/></p>");
       });
 
-      it('should render styled new line string', function() {
-        var ops = [new DeltaInsertOp('\n', { font: 'arial' })];
+      it("should render styled new line string", function() {
+        var ops = [new DeltaInsertOp("\n", { font: "arial" })];
         var qdc = new QuillDeltaToHtmlConverter([]);
-        assert.equal(qdc._renderInlines(ops), '<p><br/></p>');
+        assert.equal(qdc._renderInlines(ops), "<p><br/></p>");
 
-        var qdc = new QuillDeltaToHtmlConverter([], { paragraphTag: '' });
-        assert.equal(qdc._renderInlines(ops), '<br/>');
+        var qdc = new QuillDeltaToHtmlConverter([], { paragraphTag: "" });
+        assert.equal(qdc._renderInlines(ops), "<br/>");
       });
 
-      it('should render when first line is new line', function() {
-        var ops = [new DeltaInsertOp('\n'), new DeltaInsertOp('aa')];
+      it("should render when first line is new line", function() {
+        var ops = [new DeltaInsertOp("\n"), new DeltaInsertOp("aa")];
         var qdc = new QuillDeltaToHtmlConverter([]);
-        assert.equal(qdc._renderInlines(ops), '<p><br/>aa</p>');
+        assert.equal(qdc._renderInlines(ops), "<p><br/>aa</p>");
       });
 
-      it('should render when last line is new line', function() {
-        var ops = [new DeltaInsertOp('aa'), new DeltaInsertOp('\n')];
+      it("should render when last line is new line", function() {
+        var ops = [new DeltaInsertOp("aa"), new DeltaInsertOp("\n")];
         var qdc = new QuillDeltaToHtmlConverter([]);
-        assert.equal(qdc._renderInlines(ops), '<p>aa</p>');
+        assert.equal(qdc._renderInlines(ops), "<p>aa</p>");
       });
 
-      it('should render mixed lines', function() {
-        var ops = [new DeltaInsertOp('aa'), new DeltaInsertOp('bb')];
-        var nlop = new DeltaInsertOp('\n');
-        var stylednlop = new DeltaInsertOp('\n', {
-          color: '#333',
+      it("should render mixed lines", function() {
+        var ops = [new DeltaInsertOp("aa"), new DeltaInsertOp("bb")];
+        var nlop = new DeltaInsertOp("\n");
+        var stylednlop = new DeltaInsertOp("\n", {
+          color: "#333",
           italic: true
         });
         var qdc = new QuillDeltaToHtmlConverter([]);
-        assert.equal(qdc._renderInlines(ops), '<p>aabb</p>');
+        assert.equal(qdc._renderInlines(ops), "<p>aabb</p>");
 
         var ops0 = [nlop, ops[0], nlop, ops[1]];
-        assert.equal(qdc._renderInlines(ops0), '<p><br/>aa<br/>bb</p>');
+        assert.equal(qdc._renderInlines(ops0), "<p><br/>aa<br/>bb</p>");
 
         var ops4 = [ops[0], stylednlop, stylednlop, stylednlop, ops[1]];
         assert.equal(
           qdc._renderInlines(ops4),
-          ['<p>aa<br/><br/><br/>bb</p>'].join('')
+          ["<p>aa<br/><br/><br/>bb</p>"].join("")
         );
       });
     });
 
-    describe('renderBlock()', function() {
-      var op = new DeltaInsertOp('\n', { header: 3, indent: 2 });
-      var inlineop = new DeltaInsertOp('hi there');
-      it('should render container block', function() {
+    describe("renderBlock()", function() {
+      var op = new DeltaInsertOp("\n", { header: 3, indent: 2 });
+      var inlineop = new DeltaInsertOp("hi there");
+      it("should render container block", function() {
         var qdc = new QuillDeltaToHtmlConverter([]);
         var blockhtml = qdc._renderBlock(op, [inlineop]);
         assert.equal(
           blockhtml,
-          ['<h3 class="ql-indent-2">', 'hi there</h3>'].join('')
+          ['<h3 class="ql-indent-2">', "hi there</h3>"].join("")
         );
 
         var qdc = new QuillDeltaToHtmlConverter([]);
         var blockhtml = qdc._renderBlock(op, []);
         assert.equal(
           blockhtml,
-          ['<h3 class="ql-indent-2">', '<br/></h3>'].join('')
+          ['<h3 class="ql-indent-2">', "<br/></h3>"].join("")
         );
       });
 
-      it('should correctly render code block', function() {
+      it("should correctly render code block", function() {
         let ops = [
           {
-            insert: 'line 1'
+            insert: "line 1"
           },
           {
             attributes: {
-              'code-block': true
+              "code-block": true
             },
-            insert: '\n'
+            insert: "\n"
           },
           {
-            insert: 'line 2'
+            insert: "line 2"
           },
           {
             attributes: {
-              'code-block': true
+              "code-block": true
             },
-            insert: '\n'
+            insert: "\n"
           },
           {
-            insert: 'line 3'
+            insert: "line 3"
           },
           {
             attributes: {
-              'code-block': 'javascript'
+              "code-block": "javascript"
             },
-            insert: '\n'
+            insert: "\n"
           },
           {
-            insert: '<p>line 4</p>'
+            insert: "<p>line 4</p>"
           },
           {
             attributes: {
-              'code-block': true
+              "code-block": true
             },
-            insert: '\n'
+            insert: "\n"
           }
         ];
         //console.log(encodeHtml("<p>line 4</p>"));
@@ -572,12 +572,12 @@ describe('QuillDeltaToHtmlConverter', function() {
         assert.equal(
           html,
           [
-            '<pre>line 1\nline 2</pre>',
+            "<pre>line 1\nline 2</pre>",
             '<pre data-language="javascript">line 3</pre>',
-            '<pre>',
-            encodeHtml('<p>line 4</p>'),
-            '</pre>'
-          ].join('')
+            "<pre>",
+            encodeHtml("<p>line 4</p>"),
+            "</pre>"
+          ].join("")
         );
 
         qdc = new QuillDeltaToHtmlConverter(ops, {
@@ -585,35 +585,35 @@ describe('QuillDeltaToHtmlConverter', function() {
         });
         html = qdc.convert();
         assert.equal(
-          '<pre>line 1</pre><pre>line 2</pre>' +
+          "<pre>line 1</pre><pre>line 2</pre>" +
             '<pre data-language="javascript">line 3</pre>' +
-            '<pre>' +
-            encodeHtml('<p>line 4</p>') +
-            '</pre>',
+            "<pre>" +
+            encodeHtml("<p>line 4</p>") +
+            "</pre>",
           html
         );
         qdc = new QuillDeltaToHtmlConverter([ops[0], ops[1]]);
         html = qdc.convert();
-        assert.equal(html, '<pre>line 1</pre>');
+        assert.equal(html, "<pre>line 1</pre>");
       });
     });
 
-    describe('before n after renders()', function() {
+    describe("before n after renders()", function() {
       var ops = [
-        { insert: 'hello', attributes: { bold: true } },
-        { insert: '\n', attributes: { bold: true } },
-        { insert: 'how r u?' },
-        { insert: 'r u fine' },
-        { insert: '\n', attributes: { blockquote: true } },
-        { insert: { video: 'http://' } },
-        { insert: 'list item 1' },
-        { insert: '\n', attributes: { list: 'bullet' } },
-        { insert: 'list item 1 indented' },
-        { insert: '\n', attributes: { list: 'bullet', indent: 1 } }
+        { insert: "hello", attributes: { bold: true } },
+        { insert: "\n", attributes: { bold: true } },
+        { insert: "how r u?" },
+        { insert: "r u fine" },
+        { insert: "\n", attributes: { blockquote: true } },
+        { insert: { video: "http://" } },
+        { insert: "list item 1" },
+        { insert: "\n", attributes: { list: "bullet" } },
+        { insert: "list item 1 indented" },
+        { insert: "\n", attributes: { list: "bullet", indent: 1 } }
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops);
 
-      it('should call before/after render callbacks ', function(done) {
+      it("should call before/after render callbacks ", function(done) {
         let status = { x: 0, y: 8 };
         qdc.beforeRender((groupType, data) => {
           if (groupType === GroupType.InlineGroup) {
@@ -621,7 +621,7 @@ describe('QuillDeltaToHtmlConverter', function() {
             assert.ok(op.attributes.bold);
           } else if (groupType === GroupType.Video) {
             var op = (<any>data).op;
-            assert.ok(op.insert.type === 'video');
+            assert.ok(op.insert.type === "video");
           } else if (groupType === GroupType.Block) {
             var d = <any>data;
             assert.ok(d.op.attributes.blockquote && d.ops.length === 2);
@@ -630,17 +630,17 @@ describe('QuillDeltaToHtmlConverter', function() {
             assert.ok(d.items.length === 1);
           }
           status.x++;
-          return '';
+          return "";
         });
         qdc.afterRender((groupType, html) => {
           if (groupType === GroupType.InlineGroup) {
-            assert.ok(html.indexOf('<strong>hello') > -1);
+            assert.ok(html.indexOf("<strong>hello") > -1);
           } else if (groupType === GroupType.Video) {
-            assert.ok(html.indexOf('<iframe') > -1);
+            assert.ok(html.indexOf("<iframe") > -1);
           } else if (groupType === GroupType.Block) {
-            assert.ok(html.indexOf('<blockquote') > -1);
+            assert.ok(html.indexOf("<blockquote") > -1);
           } else {
-            assert.ok(html.indexOf('list item 1<ul><li') > -1);
+            assert.ok(html.indexOf("list item 1<ul><li") > -1);
           }
           status.x++;
           return html;
@@ -652,54 +652,54 @@ describe('QuillDeltaToHtmlConverter', function() {
       it(`should call before render with block grouptype for align
                   indent and direction`, done => {
         let ops = [
-          { insert: 'align' },
-          { insert: '\n', attributes: { align: 'right' } },
-          { insert: 'rtl' },
-          { insert: '\n', attributes: { direction: 'rtl' } },
-          { insert: 'indent 1' },
-          { insert: '\n', attributes: { indent: 1 } }
+          { insert: "align" },
+          { insert: "\n", attributes: { align: "right" } },
+          { insert: "rtl" },
+          { insert: "\n", attributes: { direction: "rtl" } },
+          { insert: "indent 1" },
+          { insert: "\n", attributes: { indent: 1 } }
         ];
         let status = { x: 0, y: 3 };
         let qdc = new QuillDeltaToHtmlConverter(ops);
         qdc.beforeRender((gtype: any) => {
-          gtype === 'block' && status.x++;
-          return '';
+          gtype === "block" && status.x++;
+          return "";
         });
         qdc.convert();
         callWhenXEqualY(status, done);
       });
 
-      it('should use my custom html if I return from before call back', function() {
+      it("should use my custom html if I return from before call back", function() {
         var c = new QuillDeltaToHtmlConverter([
-          { insert: { video: 'http' } },
-          { insert: 'aa' }
+          { insert: { video: "http" } },
+          { insert: "aa" }
         ]);
         c.beforeRender(() => {
-          return '<my custom video html>';
+          return "<my custom video html>";
         });
         var v = c.convert();
-        assert.ok(v.indexOf('<my custom') > -1);
+        assert.ok(v.indexOf("<my custom") > -1);
       });
 
-      it('should register and use callbacks if they are functions', function() {
+      it("should register and use callbacks if they are functions", function() {
         var c = new QuillDeltaToHtmlConverter([
-          { insert: { video: 'http' } },
-          { insert: 'aa' }
+          { insert: { video: "http" } },
+          { insert: "aa" }
         ]);
-        var dummy = (): any => '';
+        var dummy = (): any => "";
 
         c.beforeRender(dummy());
         c.afterRender(dummy());
         v = c.convert();
-        assert.ok(v.indexOf('iframe') > -1);
+        assert.ok(v.indexOf("iframe") > -1);
 
         c.beforeRender(dummy);
         var v = c.convert();
-        assert.ok(v.indexOf('<iframe') > -1 && v.indexOf('aa') > -1);
+        assert.ok(v.indexOf("<iframe") > -1 && v.indexOf("aa") > -1);
 
         c.afterRender(dummy);
         v = c.convert();
-        assert.ok(v === '');
+        assert.ok(v === "");
       });
     });
   });

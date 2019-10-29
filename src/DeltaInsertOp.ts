@@ -1,14 +1,14 @@
-import { NewLine, ListType, DataType } from './value-types';
-import { IOpAttributes } from './OpAttributeSanitizer';
-import { InsertData, InsertDataCustom, InsertDataQuill } from './InsertData';
+import { NewLine, ListType, DataType } from "./value-types";
+import { IOpAttributes } from "./OpAttributeSanitizer";
+import { InsertData, InsertDataCustom, InsertDataQuill } from "./InsertData";
 
 class DeltaInsertOp {
   readonly insert: InsertData;
   readonly attributes: IOpAttributes;
 
   constructor(insertVal: InsertData | string, attrs?: IOpAttributes) {
-    if (typeof insertVal === 'string') {
-      insertVal = new InsertDataQuill(DataType.Text, insertVal + '');
+    if (typeof insertVal === "string") {
+      insertVal = new InsertDataQuill(DataType.Text, insertVal + "");
     }
     this.insert = insertVal;
     this.attributes = attrs || {};
@@ -23,7 +23,7 @@ class DeltaInsertOp {
     return !!(
       attrs.blockquote ||
       attrs.list ||
-      attrs['code-block'] ||
+      attrs["code-block"] ||
       attrs.header ||
       attrs.align ||
       attrs.direction ||
@@ -68,11 +68,11 @@ class DeltaInsertOp {
   }
 
   isCodeBlock() {
-    return !!this.attributes['code-block'];
+    return !!this.attributes["code-block"];
   }
 
   hasSameLangAs(op: DeltaInsertOp) {
-    return this.attributes['code-block'] === op.attributes['code-block'];
+    return this.attributes["code-block"] === op.attributes["code-block"];
   }
 
   isJustNewline() {
