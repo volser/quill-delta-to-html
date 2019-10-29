@@ -1,6 +1,6 @@
 {
   "name": "quill-delta-to-html-clickup",
-  "version": "0.10.13-a.2",
+  "version": "0.10.13-a.3",
   "description": "Converts Quill's delta ops to HTML",
   "main": "./dist/commonjs/main.js",
   "types": "./dist/commonjs/main.d.ts",
