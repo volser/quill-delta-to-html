@@ -4,7 +4,7 @@
  */
 
 function tokenizeWithNewLines(str: string): string[] {
-  const NewLine = "\n";
+  const NewLine = '\n';
 
   if (str === NewLine) {
     return [str];
@@ -20,12 +20,12 @@ function tokenizeWithNewLines(str: string): string[] {
 
   return lines.reduce((pv: string[], line: string, ind: number) => {
     if (ind !== lastIndex) {
-      if (line !== "") {
+      if (line !== '') {
         pv = pv.concat(line, NewLine);
       } else {
         pv.push(NewLine);
       }
-    } else if (line !== "") {
+    } else if (line !== '') {
       pv.push(line);
     }
     return pv;

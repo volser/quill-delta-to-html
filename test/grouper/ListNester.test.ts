@@ -1,32 +1,32 @@
-import "mocha";
-import * as assert from "assert";
+import 'mocha';
+import * as assert from 'assert';
 
-import { Grouper } from "./../../src/grouper/Grouper";
-import { ListNester } from "./../../src/grouper/ListNester";
-import { DeltaInsertOp } from "./../../src/DeltaInsertOp";
+import { Grouper } from './../../src/grouper/Grouper';
+import { ListNester } from './../../src/grouper/ListNester';
+import { DeltaInsertOp } from './../../src/DeltaInsertOp';
 import {
   ListGroup,
   ListItem,
   InlineGroup,
   BlockGroup
-} from "./../../src/grouper/group-types";
-import { ListType } from "./../../src/value-types";
+} from './../../src/grouper/group-types';
+import { ListType } from './../../src/value-types';
 
-describe("ListNester", function() {
-  describe("nest()", function() {
-    it("should not nest different types of lists", function() {
+describe('ListNester', function() {
+  describe('nest()', function() {
+    it('should not nest different types of lists', function() {
       var ops = [
-        new DeltaInsertOp("ordered list 1 item 1"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered }),
-        new DeltaInsertOp("bullet list 1 item 1"),
-        new DeltaInsertOp("\n", { list: ListType.Bullet }),
-        new DeltaInsertOp("bullet list 1 item 2"),
-        new DeltaInsertOp("\n", { list: ListType.Bullet }),
-        new DeltaInsertOp("haha"),
-        new DeltaInsertOp("\n"),
-        new DeltaInsertOp("\n", { list: ListType.Bullet }),
-        new DeltaInsertOp("\n", { list: ListType.Checked }),
-        new DeltaInsertOp("\n", { list: ListType.Unchecked })
+        new DeltaInsertOp('ordered list 1 item 1'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered }),
+        new DeltaInsertOp('bullet list 1 item 1'),
+        new DeltaInsertOp('\n', { list: ListType.Bullet }),
+        new DeltaInsertOp('bullet list 1 item 2'),
+        new DeltaInsertOp('\n', { list: ListType.Bullet }),
+        new DeltaInsertOp('haha'),
+        new DeltaInsertOp('\n'),
+        new DeltaInsertOp('\n', { list: ListType.Bullet }),
+        new DeltaInsertOp('\n', { list: ListType.Checked }),
+        new DeltaInsertOp('\n', { list: ListType.Unchecked })
       ];
 
       var groups = Grouper.pairOpsWithTheirBlock(ops);
@@ -48,22 +48,22 @@ describe("ListNester", function() {
       ]);
     });
 
-    it("should nest if lists are same and later ones have higher indent", function() {
+    it('should nest if lists are same and later ones have higher indent', function() {
       var ops = [
-        new DeltaInsertOp("item 1"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered }),
-        new DeltaInsertOp("item 1a"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered, indent: 1 }),
-        new DeltaInsertOp("item 1a-i"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered, indent: 3 }),
-        new DeltaInsertOp("item 1b"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered, indent: 1 }),
-        new DeltaInsertOp("item 2"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered }),
-        new DeltaInsertOp("haha"),
-        new DeltaInsertOp("\n"),
-        new DeltaInsertOp("\n", { list: ListType.Ordered, indent: 5 }),
-        new DeltaInsertOp("\n", { list: ListType.Bullet, indent: 4 })
+        new DeltaInsertOp('item 1'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered }),
+        new DeltaInsertOp('item 1a'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 1 }),
+        new DeltaInsertOp('item 1a-i'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 3 }),
+        new DeltaInsertOp('item 1b'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 1 }),
+        new DeltaInsertOp('item 2'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered }),
+        new DeltaInsertOp('haha'),
+        new DeltaInsertOp('\n'),
+        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 5 }),
+        new DeltaInsertOp('\n', { list: ListType.Bullet, indent: 4 })
       ];
       var pairs = Grouper.pairOpsWithTheirBlock(ops);
 

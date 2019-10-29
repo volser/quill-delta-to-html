@@ -1,4 +1,4 @@
-import { DeltaInsertOp } from "./../DeltaInsertOp";
+import { DeltaInsertOp } from './../DeltaInsertOp';
 
 class InlineGroup {
   readonly ops: DeltaInsertOp[];

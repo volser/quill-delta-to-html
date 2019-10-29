@@ -1,9 +1,9 @@
-import { ListType, AlignType, DirectionType, ScriptType } from "./value-types";
-import { MentionSanitizer } from "./mentions/MentionSanitizer";
-import * as url from "./helpers/url";
-import { encodeLink } from "./funcs-html";
-import { IMention } from "./mentions/MentionSanitizer";
-import { find } from "./helpers/array";
+import { ListType, AlignType, DirectionType, ScriptType } from './value-types';
+import { MentionSanitizer } from './mentions/MentionSanitizer';
+import * as url from './helpers/url';
+import { encodeLink } from './funcs-html';
+import { IMention } from './mentions/MentionSanitizer';
+import { find } from './helpers/array';
 
 interface IOpAttributes {
   background?: string | undefined;
@@ -23,7 +23,7 @@ interface IOpAttributes {
 
   list?: ListType;
   blockquote?: boolean | undefined;
-  "code-block"?: string | boolean | undefined;
+  'code-block'?: string | boolean | undefined;
   header?: number | undefined;
   align?: AlignType;
   direction?: DirectionType;
@@ -52,21 +52,21 @@ class OpAttributeSanitizer {
   ): IOpAttributes {
     var cleanAttrs: any = {};
 
-    if (!dirtyAttrs || typeof dirtyAttrs !== "object") {
+    if (!dirtyAttrs || typeof dirtyAttrs !== 'object') {
       return cleanAttrs;
     }
     let booleanAttrs = [
-      "bold",
-      "italic",
-      "underline",
-      "strike",
-      "code",
-      "blockquote",
-      "code-block",
-      "renderAsBlock"
+      'bold',
+      'italic',
+      'underline',
+      'strike',
+      'code',
+      'blockquote',
+      'code-block',
+      'renderAsBlock'
     ];
 
-    let colorAttrs = ["background", "color"];
+    let colorAttrs = ['background', 'color'];
 
     let {
       font,
@@ -84,26 +84,26 @@ class OpAttributeSanitizer {
       target,
       rel
     } = dirtyAttrs;
-    let codeBlock = dirtyAttrs["code-block"];
+    let codeBlock = dirtyAttrs['code-block'];
 
     let sanitizedAttrs = [
       ...booleanAttrs,
       ...colorAttrs,
-      "font",
-      "size",
-      "link",
-      "script",
-      "list",
-      "header",
-      "align",
-      "direction",
-      "indent",
-      "mentions",
-      "mention",
-      "width",
-      "target",
-      "rel",
-      "code-block"
+      'font',
+      'size',
+      'link',
+      'script',
+      'list',
+      'header',
+      'align',
+      'direction',
+      'indent',
+      'mentions',
+      'mention',
+      'width',
+      'target',
+      'rel',
+      'code-block'
     ];
     booleanAttrs.forEach(function(prop: string) {
       var v = (<any>dirtyAttrs)[prop];
@@ -116,29 +116,29 @@ class OpAttributeSanitizer {
       var val = (<any>dirtyAttrs)[prop];
       if (
         val &&
-        (OpAttributeSanitizer.IsValidHexColor(val + "") ||
-          OpAttributeSanitizer.IsValidColorLiteral(val + "") ||
-          OpAttributeSanitizer.IsValidRGBColor(val + ""))
+        (OpAttributeSanitizer.IsValidHexColor(val + '') ||
+          OpAttributeSanitizer.IsValidColorLiteral(val + '') ||
+          OpAttributeSanitizer.IsValidRGBColor(val + ''))
       ) {
         cleanAttrs[prop] = val;
       }
     });
 
-    if (font && OpAttributeSanitizer.IsValidFontName(font + "")) {
+    if (font && OpAttributeSanitizer.IsValidFontName(font + '')) {
       cleanAttrs.font = font;
     }
 
-    if (size && OpAttributeSanitizer.IsValidSize(size + "")) {
+    if (size && OpAttributeSanitizer.IsValidSize(size + '')) {
       cleanAttrs.size = size;
     }
 
-    if (width && OpAttributeSanitizer.IsValidWidth(width + "")) {
+    if (width && OpAttributeSanitizer.IsValidWidth(width + '')) {
       cleanAttrs.width = width;
     }
 
     if (link) {
       cleanAttrs.link = OpAttributeSanitizer.sanitizeLinkUsingOptions(
-        link + "",
+        link + '',
         sanitizeOptions
       );
     }
@@ -152,9 +152,9 @@ class OpAttributeSanitizer {
 
     if (codeBlock) {
       if (OpAttributeSanitizer.IsValidLang(codeBlock)) {
-        cleanAttrs["code-block"] = codeBlock;
+        cleanAttrs['code-block'] = codeBlock;
       } else {
-        cleanAttrs["code-block"] = !!codeBlock;
+        cleanAttrs['code-block'] = !!codeBlock;
       }
     }
 
@@ -218,11 +218,11 @@ class OpAttributeSanitizer {
     let sanitizerFn: IUrlSanitizerFn = () => {
       return undefined;
     };
-    if (options && typeof options.urlSanitizer === "function") {
+    if (options && typeof options.urlSanitizer === 'function') {
       sanitizerFn = options.urlSanitizer;
     }
     let result = sanitizerFn(link);
-    return typeof result === "string" ? result : encodeLink(url.sanitize(link));
+    return typeof result === 'string' ? result : encodeLink(url.sanitize(link));
   }
   static IsValidHexColor(colorStr: string) {
     return !!colorStr.match(/^#([0-9A-F]{6}|[0-9A-F]{3})$/i);
@@ -258,7 +258,7 @@ class OpAttributeSanitizer {
   }
 
   static IsValidLang(lang: string | boolean) {
-    if (typeof lang === "boolean") {
+    if (typeof lang === 'boolean') {
       return true;
     }
     return !!lang.match(/^[a-zA-Z\s\-\\\/\+]{1,50}$/i);

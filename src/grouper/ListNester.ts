@@ -1,5 +1,5 @@
-import { ListGroup, ListItem, BlockGroup, TDataGroup } from "./group-types";
-import { flatten, groupConsecutiveElementsWhile } from "./../helpers/array";
+import { ListGroup, ListItem, BlockGroup, TDataGroup } from './group-types';
+import { flatten, groupConsecutiveElementsWhile } from './../helpers/array';
 
 class ListNester {
   nest(groups: TDataGroup[]): TDataGroup[] {

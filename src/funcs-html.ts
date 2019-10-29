@@ -13,28 +13,28 @@ function makeStartTag(
   attrs: ITagKeyValue | ITagKeyValue[] | undefined = undefined
 ) {
   if (!tag) {
-    return "";
+    return '';
   }
 
-  var attrsStr = "";
+  var attrsStr = '';
   if (attrs) {
     var arrAttrs = ([] as ITagKeyValue[]).concat(attrs);
     attrsStr = arrAttrs
       .map(function(attr: any) {
-        return attr.key + (attr.value ? '="' + attr.value + '"' : "");
+        return attr.key + (attr.value ? '="' + attr.value + '"' : '');
       })
-      .join(" ");
+      .join(' ');
   }
 
-  var closing = ">";
-  if (tag === "img" || tag === "br") {
-    closing = "/>";
+  var closing = '>';
+  if (tag === 'img' || tag === 'br') {
+    closing = '/>';
   }
   return attrsStr ? `<${tag} ${attrsStr}${closing}` : `<${tag}${closing}`;
 }
 
-function makeEndTag(tag: any = "") {
-  return (tag && `</${tag}>`) || "";
+function makeEndTag(tag: any = '') {
+  return (tag && `</${tag}>`) || '';
 }
 
 function decodeHtml(str: string) {
@@ -56,29 +56,29 @@ function encodeLink(str: string) {
 
 function encodeMappings(mtype: EncodeTarget) {
   let maps = [
-    ["&", "&amp;"],
-    ["<", "&lt;"],
-    [">", "&gt;"],
-    ['"', "&quot;"],
-    ["'", "&#x27;"],
-    ["\\/", "&#x2F;"],
-    ["\\(", "&#40;"],
-    ["\\)", "&#41;"]
+    ['&', '&amp;'],
+    ['<', '&lt;'],
+    ['>', '&gt;'],
+    ['"', '&quot;'],
+    ["'", '&#x27;'],
+    ['\\/', '&#x2F;'],
+    ['\\(', '&#40;'],
+    ['\\)', '&#41;']
   ];
   if (mtype === EncodeTarget.Html) {
     return maps.filter(
-      ([v, _]) => v.indexOf("(") === -1 && v.indexOf(")") === -1
+      ([v, _]) => v.indexOf('(') === -1 && v.indexOf(')') === -1
     );
   } else {
     // for url
-    return maps.filter(([v, _]) => v.indexOf("/") === -1);
+    return maps.filter(([v, _]) => v.indexOf('/') === -1);
   }
 }
 function encodeMapping(str: string, mapping: string[]) {
-  return str.replace(new RegExp(mapping[0], "g"), mapping[1]);
+  return str.replace(new RegExp(mapping[0], 'g'), mapping[1]);
 }
 function decodeMapping(str: string, mapping: string[]) {
-  return str.replace(new RegExp(mapping[1], "g"), mapping[0].replace("\\", ""));
+  return str.replace(new RegExp(mapping[1], 'g'), mapping[0].replace('\\', ''));
 }
 export {
   makeStartTag,

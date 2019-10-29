@@ -1,27 +1,27 @@
-import "mocha";
-import * as assert from "assert";
+import 'mocha';
+import * as assert from 'assert';
 
-import { Grouper } from "./../../src/grouper/Grouper";
-import { DeltaInsertOp } from "./../../src/DeltaInsertOp";
-import { InsertDataQuill } from "./../../src/InsertData";
+import { Grouper } from './../../src/grouper/Grouper';
+import { DeltaInsertOp } from './../../src/DeltaInsertOp';
+import { InsertDataQuill } from './../../src/InsertData';
 import {
   VideoItem,
   InlineGroup,
   BlockGroup
-} from "./../../src/grouper/group-types";
-import { DataType } from "./../../src/value-types";
-describe("Grouper", function() {
-  describe("#pairOpsWithTheirBlock()", function() {
+} from './../../src/grouper/group-types';
+import { DataType } from './../../src/value-types';
+describe('Grouper', function() {
+  describe('#pairOpsWithTheirBlock()', function() {
     var ops = [
-      new DeltaInsertOp(new InsertDataQuill(DataType.Video, "http://")),
-      new DeltaInsertOp("hello"),
-      new DeltaInsertOp("\n"),
-      new DeltaInsertOp("how are you?"),
-      new DeltaInsertOp("\n"),
-      new DeltaInsertOp("Time is money"),
-      new DeltaInsertOp("\n", { blockquote: true })
+      new DeltaInsertOp(new InsertDataQuill(DataType.Video, 'http://')),
+      new DeltaInsertOp('hello'),
+      new DeltaInsertOp('\n'),
+      new DeltaInsertOp('how are you?'),
+      new DeltaInsertOp('\n'),
+      new DeltaInsertOp('Time is money'),
+      new DeltaInsertOp('\n', { blockquote: true })
     ];
-    it("should return ops grouped by group type", function() {
+    it('should return ops grouped by group type', function() {
       var act = Grouper.pairOpsWithTheirBlock(ops);
       var exp = [
         new VideoItem(ops[0]),
@@ -32,18 +32,18 @@ describe("Grouper", function() {
     });
   });
 
-  describe("#groupConsecutiveSameStyleBlocks()", function() {
-    it("should compine blocks with same type and style into an []", function() {
+  describe('#groupConsecutiveSameStyleBlocks()', function() {
+    it('should compine blocks with same type and style into an []', function() {
       var ops = [
-        new DeltaInsertOp("this is code"),
-        new DeltaInsertOp("\n", { "code-block": true }),
-        new DeltaInsertOp("this is code TOO!"),
-        new DeltaInsertOp("\n", { "code-block": true }),
-        new DeltaInsertOp("\n", { blockquote: true }),
-        new DeltaInsertOp("\n", { blockquote: true }),
-        new DeltaInsertOp("\n"),
-        new DeltaInsertOp("\n", { header: 1 }),
-        new DeltaInsertOp("\n", { header: 1 })
+        new DeltaInsertOp('this is code'),
+        new DeltaInsertOp('\n', { 'code-block': true }),
+        new DeltaInsertOp('this is code TOO!'),
+        new DeltaInsertOp('\n', { 'code-block': true }),
+        new DeltaInsertOp('\n', { blockquote: true }),
+        new DeltaInsertOp('\n', { blockquote: true }),
+        new DeltaInsertOp('\n'),
+        new DeltaInsertOp('\n', { header: 1 }),
+        new DeltaInsertOp('\n', { header: 1 })
       ];
       var pairs = Grouper.pairOpsWithTheirBlock(ops);
       var groups = Grouper.groupConsecutiveSameStyleBlocks(pairs, {
@@ -59,17 +59,17 @@ describe("Grouper", function() {
       ]);
     });
   });
-  describe("#reduceConsecutiveSameStyleBlocksToOne()", function() {
-    it("should return ops of combined groups moved to 1st group", function() {
+  describe('#reduceConsecutiveSameStyleBlocksToOne()', function() {
+    it('should return ops of combined groups moved to 1st group', function() {
       var ops = [
-        new DeltaInsertOp("this is code"),
-        new DeltaInsertOp("\n", { "code-block": true }),
-        new DeltaInsertOp("this is code TOO!"),
-        new DeltaInsertOp("\n", { "code-block": true }),
-        new DeltaInsertOp("\n", { blockquote: true }),
-        new DeltaInsertOp("\n", { blockquote: true }),
-        new DeltaInsertOp("\n"),
-        new DeltaInsertOp("\n", { header: 1 })
+        new DeltaInsertOp('this is code'),
+        new DeltaInsertOp('\n', { 'code-block': true }),
+        new DeltaInsertOp('this is code TOO!'),
+        new DeltaInsertOp('\n', { 'code-block': true }),
+        new DeltaInsertOp('\n', { blockquote: true }),
+        new DeltaInsertOp('\n', { blockquote: true }),
+        new DeltaInsertOp('\n'),
+        new DeltaInsertOp('\n', { header: 1 })
       ];
       var pairs = Grouper.pairOpsWithTheirBlock(ops);
       var groups = Grouper.groupConsecutiveSameStyleBlocks(pairs);

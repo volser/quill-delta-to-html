@@ -5,7 +5,7 @@ function assign(
 ) {
   // TypeError if undefined or null
   if (target == null) {
-    throw new TypeError("Cannot convert undefined or null to object");
+    throw new TypeError('Cannot convert undefined or null to object');
   }
 
   var to = Object(target);

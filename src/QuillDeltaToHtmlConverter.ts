@@ -1,11 +1,11 @@
-import { InsertOpsConverter } from "./InsertOpsConverter";
+import { InsertOpsConverter } from './InsertOpsConverter';
 import {
   OpToHtmlConverter,
   IOpToHtmlConverterOptions,
   IInlineStyles
-} from "./OpToHtmlConverter";
-import { DeltaInsertOp } from "./DeltaInsertOp";
-import { Grouper } from "./grouper/Grouper";
+} from './OpToHtmlConverter';
+import { DeltaInsertOp } from './DeltaInsertOp';
+import { Grouper } from './grouper/Grouper';
 import {
   VideoItem,
   InlineGroup,
@@ -14,12 +14,12 @@ import {
   ListItem,
   TDataGroup,
   BlotBlock
-} from "./grouper/group-types";
-import { ListNester } from "./grouper/ListNester";
-import { makeStartTag, makeEndTag, encodeHtml } from "./funcs-html";
-import * as obj from "./helpers/object";
-import { GroupType } from "./value-types";
-import { IOpAttributeSanitizerOptions } from "./OpAttributeSanitizer";
+} from './grouper/group-types';
+import { ListNester } from './grouper/ListNester';
+import { makeStartTag, makeEndTag, encodeHtml } from './funcs-html';
+import * as obj from './helpers/object';
+import { GroupType } from './value-types';
+import { IOpAttributeSanitizerOptions } from './OpAttributeSanitizer';
 
 interface IQuillDeltaToHtmlConverterOptions
   extends IOpAttributeSanitizerOptions,
@@ -33,7 +33,7 @@ interface IQuillDeltaToHtmlConverterOptions
   multiLineParagraph?: boolean;
 }
 
-const BrTag = "<br/>";
+const BrTag = '<br/>';
 
 class QuillDeltaToHtmlConverter {
   private options: IQuillDeltaToHtmlConverterOptions;
@@ -46,29 +46,29 @@ class QuillDeltaToHtmlConverter {
   constructor(deltaOps: any[], options?: IQuillDeltaToHtmlConverterOptions) {
     this.options = obj.assign(
       {
-        paragraphTag: "p",
+        paragraphTag: 'p',
         encodeHtml: true,
-        classPrefix: "ql",
+        classPrefix: 'ql',
         inlineStyles: false,
         multiLineBlockquote: true,
         multiLineHeader: true,
         multiLineCodeblock: true,
         multiLineParagraph: true,
         allowBackgroundClasses: false,
-        linkTarget: "_blank"
+        linkTarget: '_blank'
       },
       options,
       {
-        orderedListTag: "ol",
-        bulletListTag: "ul",
-        listItemTag: "li"
+        orderedListTag: 'ol',
+        bulletListTag: 'ul',
+        listItemTag: 'li'
       }
     );
 
     var inlineStyles: IInlineStyles | undefined;
     if (!this.options.inlineStyles) {
       inlineStyles = undefined;
-    } else if (typeof this.options.inlineStyles === "object") {
+    } else if (typeof this.options.inlineStyles === 'object') {
       inlineStyles = this.options.inlineStyles;
     } else {
       inlineStyles = {};
@@ -89,14 +89,14 @@ class QuillDeltaToHtmlConverter {
 
   _getListTag(op: DeltaInsertOp): string {
     return op.isOrderedList()
-      ? this.options.orderedListTag + ""
+      ? this.options.orderedListTag + ''
       : op.isBulletList()
-      ? this.options.bulletListTag + ""
+      ? this.options.bulletListTag + ''
       : op.isCheckedList()
-      ? this.options.bulletListTag + ""
+      ? this.options.bulletListTag + ''
       : op.isUncheckedList()
-      ? this.options.bulletListTag + ""
-      : "";
+      ? this.options.bulletListTag + ''
+      : '';
   }
 
   getGroupedOps(): TDataGroup[] {
@@ -149,7 +149,7 @@ class QuillDeltaToHtmlConverter {
           });
         }
       })
-      .join("");
+      .join('');
   }
 
   _renderWithCallbacks(
@@ -157,20 +157,20 @@ class QuillDeltaToHtmlConverter {
     group: TDataGroup,
     myRenderFn: () => string
   ) {
-    var html = "";
-    var beforeCb = this.callbacks["beforeRender_cb"];
+    var html = '';
+    var beforeCb = this.callbacks['beforeRender_cb'];
     html =
-      typeof beforeCb === "function"
+      typeof beforeCb === 'function'
         ? beforeCb.apply(null, [groupType, group])
-        : "";
+        : '';
 
     if (!html) {
       html = myRenderFn();
     }
 
-    var afterCb = this.callbacks["afterRender_cb"];
+    var afterCb = this.callbacks['afterRender_cb'];
     html =
-      typeof afterCb === "function"
+      typeof afterCb === 'function'
         ? afterCb.apply(null, [groupType, html])
         : html;
 
@@ -181,7 +181,7 @@ class QuillDeltaToHtmlConverter {
     var firstItem = list.items[0];
     return (
       makeStartTag(this._getListTag(firstItem.item.op)) +
-      list.items.map((li: ListItem) => this._renderListItem(li)).join("") +
+      list.items.map((li: ListItem) => this._renderListItem(li)).join('') +
       makeEndTag(this._getListTag(firstItem.item.op))
     );
   }
@@ -196,7 +196,7 @@ class QuillDeltaToHtmlConverter {
     return (
       parts.openingTag +
       liElementsHtml +
-      (li.innerList ? this._renderList(li.innerList) : "") +
+      (li.innerList ? this._renderList(li.innerList) : '') +
       parts.closingTag
     );
   }
@@ -213,13 +213,13 @@ class QuillDeltaToHtmlConverter {
             .map(iop =>
               iop.isCustom() ? this._renderCustom(iop, bop) : iop.insert.value
             )
-            .join("")
+            .join('')
         ) +
         htmlParts.closingTag
       );
     }
 
-    var inlines = ops.map(op => this._renderInline(op, bop)).join("");
+    var inlines = ops.map(op => this._renderInline(op, bop)).join('');
     return htmlParts.openingTag + (inlines || BrTag) + htmlParts.closingTag;
   }
 
@@ -228,11 +228,11 @@ class QuillDeltaToHtmlConverter {
     var html = ops
       .map((op: DeltaInsertOp, i: number) => {
         if (i > 0 && i === opsLen && op.isJustNewline()) {
-          return "";
+          return '';
         }
         return this._renderInline(op, null);
       })
-      .join("");
+      .join('');
     if (!isInlineGroup) {
       return html;
     }
@@ -247,7 +247,7 @@ class QuillDeltaToHtmlConverter {
       html
         .split(BrTag)
         .map(v => {
-          return v === "" ? BrTag : v;
+          return v === '' ? BrTag : v;
         })
         .join(endParaTag + startParaTag) +
       endParaTag
@@ -263,29 +263,29 @@ class QuillDeltaToHtmlConverter {
   }
 
   _renderCustom(op: DeltaInsertOp, contextOp: DeltaInsertOp | null) {
-    var renderCb = this.callbacks["renderCustomOp_cb"];
-    if (typeof renderCb === "function") {
+    var renderCb = this.callbacks['renderCustomOp_cb'];
+    if (typeof renderCb === 'function') {
       return renderCb.apply(null, [op, contextOp]);
     }
-    return "";
+    return '';
   }
 
   beforeRender(cb: (group: GroupType, data: TDataGroup) => string) {
-    if (typeof cb === "function") {
-      this.callbacks["beforeRender_cb"] = cb;
+    if (typeof cb === 'function') {
+      this.callbacks['beforeRender_cb'] = cb;
     }
   }
 
   afterRender(cb: (group: GroupType, html: string) => string) {
-    if (typeof cb === "function") {
-      this.callbacks["afterRender_cb"] = cb;
+    if (typeof cb === 'function') {
+      this.callbacks['afterRender_cb'] = cb;
     }
   }
 
   renderCustomWith(
     cb: (op: DeltaInsertOp, contextOp: DeltaInsertOp) => string
   ) {
-    this.callbacks["renderCustomOp_cb"] = cb;
+    this.callbacks['renderCustomOp_cb'] = cb;
   }
 }
 

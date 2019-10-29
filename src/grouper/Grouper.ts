@@ -1,10 +1,10 @@
-import { DeltaInsertOp } from "./../DeltaInsertOp";
+import { DeltaInsertOp } from './../DeltaInsertOp';
 import {
   IArraySlice,
   flatten,
   groupConsecutiveElementsWhile,
   sliceFromReverseWhile
-} from "./../helpers/array";
+} from './../helpers/array';
 
 import {
   VideoItem,
@@ -12,7 +12,7 @@ import {
   BlockGroup,
   TDataGroup,
   BlotBlock
-} from "./group-types";
+} from './group-types';
 
 class Grouper {
   static pairOpsWithTheirBlock(ops: DeltaInsertOp[]): TDataGroup[] {

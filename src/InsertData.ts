@@ -1,4 +1,4 @@
-import { DataType } from "./value-types";
+import { DataType } from './value-types';
 
 class InsertDataQuill {
   readonly type: DataType;

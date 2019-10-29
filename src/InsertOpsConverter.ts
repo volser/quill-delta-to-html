@@ -1,11 +1,11 @@
-import { DeltaInsertOp } from "./DeltaInsertOp";
-import { DataType } from "./value-types";
-import { InsertData, InsertDataCustom, InsertDataQuill } from "./InsertData";
+import { DeltaInsertOp } from './DeltaInsertOp';
+import { DataType } from './value-types';
+import { InsertData, InsertDataCustom, InsertDataQuill } from './InsertData';
 import {
   OpAttributeSanitizer,
   IOpAttributeSanitizerOptions
-} from "./OpAttributeSanitizer";
-import { InsertOpDenormalizer } from "./InsertOpDenormalizer";
+} from './OpAttributeSanitizer';
+import { InsertOpDenormalizer } from './InsertOpDenormalizer';
 
 /**
  * Converts raw delta insert ops to array of denormalized DeltaInsertOp objects
@@ -48,11 +48,11 @@ class InsertOpsConverter {
     insertPropVal: any,
     sanitizeOptions: IOpAttributeSanitizerOptions
   ): InsertData | null {
-    if (typeof insertPropVal === "string") {
+    if (typeof insertPropVal === 'string') {
       return new InsertDataQuill(DataType.Text, insertPropVal);
     }
 
-    if (!insertPropVal || typeof insertPropVal !== "object") {
+    if (!insertPropVal || typeof insertPropVal !== 'object') {
       return null;
     }
 
@@ -65,7 +65,7 @@ class InsertOpsConverter {
       ? new InsertDataQuill(
           DataType.Image,
           OpAttributeSanitizer.sanitizeLinkUsingOptions(
-            insertPropVal[DataType.Image] + "",
+            insertPropVal[DataType.Image] + '',
             sanitizeOptions
           )
         )
@@ -73,7 +73,7 @@ class InsertOpsConverter {
       ? new InsertDataQuill(
           DataType.Video,
           OpAttributeSanitizer.sanitizeLinkUsingOptions(
-            insertPropVal[DataType.Video] + "",
+            insertPropVal[DataType.Video] + '',
             sanitizeOptions
           )
         )

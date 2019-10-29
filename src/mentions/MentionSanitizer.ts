@@ -1,7 +1,7 @@
 import {
   IOpAttributeSanitizerOptions,
   OpAttributeSanitizer
-} from "./../OpAttributeSanitizer";
+} from './../OpAttributeSanitizer';
 
 interface IMention {
   [index: string]: string | undefined;
@@ -11,7 +11,7 @@ interface IMention {
   class?: string;
   avatar?: string;
   id?: string;
-  "end-point"?: string;
+  'end-point'?: string;
 }
 
 class MentionSanitizer {
@@ -21,7 +21,7 @@ class MentionSanitizer {
   ): IMention {
     var cleanObj: any = {};
 
-    if (!dirtyObj || typeof dirtyObj !== "object") {
+    if (!dirtyObj || typeof dirtyObj !== 'object') {
       return cleanObj;
     }
 
@@ -33,26 +33,26 @@ class MentionSanitizer {
       cleanObj.id = dirtyObj.id;
     }
 
-    if (MentionSanitizer.IsValidTarget(dirtyObj.target + "")) {
+    if (MentionSanitizer.IsValidTarget(dirtyObj.target + '')) {
       cleanObj.target = dirtyObj.target;
     }
 
     if (dirtyObj.avatar) {
       cleanObj.avatar = OpAttributeSanitizer.sanitizeLinkUsingOptions(
-        dirtyObj.avatar + "",
+        dirtyObj.avatar + '',
         sanitizeOptions
       );
     }
 
-    if (dirtyObj["end-point"]) {
-      cleanObj["end-point"] = OpAttributeSanitizer.sanitizeLinkUsingOptions(
-        dirtyObj["end-point"] + "",
+    if (dirtyObj['end-point']) {
+      cleanObj['end-point'] = OpAttributeSanitizer.sanitizeLinkUsingOptions(
+        dirtyObj['end-point'] + '',
         sanitizeOptions
       );
     }
 
     if (dirtyObj.slug) {
-      cleanObj.slug = dirtyObj.slug + "";
+      cleanObj.slug = dirtyObj.slug + '';
     }
 
     return cleanObj;
@@ -67,7 +67,7 @@ class MentionSanitizer {
   }
 
   static IsValidTarget(target: string) {
-    return ["_self", "_blank", "_parent", "_top"].indexOf(target) > -1;
+    return ['_self', '_blank', '_parent', '_top'].indexOf(target) > -1;
   }
 }
 

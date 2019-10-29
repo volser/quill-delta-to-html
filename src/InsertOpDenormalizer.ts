@@ -1,6 +1,6 @@
-import { NewLine } from "./value-types";
-import * as str from "./helpers/string";
-import * as obj from "./helpers/object";
+import { NewLine } from './value-types';
+import * as str from './helpers/string';
+import * as obj from './helpers/object';
 
 /**
  * Denormalization is splitting a text insert operation that has new lines into multiple
@@ -24,15 +24,15 @@ import * as obj from "./helpers/object";
 
 class InsertOpDenormalizer {
   static denormalize(op: any): any[] {
-    if (!op || typeof op !== "object") {
+    if (!op || typeof op !== 'object') {
       return [];
     }
 
-    if (typeof op.insert === "object" || op.insert === NewLine) {
+    if (typeof op.insert === 'object' || op.insert === NewLine) {
       return [op];
     }
 
-    let newlinedArray = str.tokenizeWithNewLines(op.insert + "");
+    let newlinedArray = str.tokenizeWithNewLines(op.insert + '');
 
     if (newlinedArray.length === 1) {
       return [op];
