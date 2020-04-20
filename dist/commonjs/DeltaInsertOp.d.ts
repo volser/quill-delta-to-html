@@ -6,12 +6,14 @@ declare class DeltaInsertOp {
   constructor(insertVal: InsertData | string, attrs?: IOpAttributes);
   static createNewLineOp(): DeltaInsertOp;
   isContainerBlock(): boolean;
+  isBlockAttribute(): boolean;
   isBlockquote(): boolean;
   isHeader(): boolean;
   isTable(): boolean;
   isSameHeaderAs(op: DeltaInsertOp): boolean;
   hasSameAdiAs(op: DeltaInsertOp): boolean;
   hasSameIndentationAs(op: DeltaInsertOp): boolean;
+  hasSameAttr(op: DeltaInsertOp): boolean;
   hasHigherIndentThan(op: DeltaInsertOp): boolean;
   isInline(): boolean;
   isCodeBlock(): boolean;
@@ -30,8 +32,9 @@ declare class DeltaInsertOp {
   isFormula(): boolean;
   isVideo(): boolean;
   isLink(): boolean;
-  isCustom(): boolean;
-  isCustomBlock(): boolean;
+  isCustomEmbed(): boolean;
+  isCustomEmbedBlock(): boolean;
+  isCustomTextBlock(): boolean;
   isMentions(): boolean;
 }
 export { DeltaInsertOp };

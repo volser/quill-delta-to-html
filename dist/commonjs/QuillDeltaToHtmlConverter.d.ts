@@ -19,6 +19,7 @@ interface IQuillDeltaToHtmlConverterOptions
   multiLineHeader?: boolean;
   multiLineCodeblock?: boolean;
   multiLineParagraph?: boolean;
+  multiLineCustomBlock?: boolean;
 }
 declare class QuillDeltaToHtmlConverter {
   private options;

@@ -26,6 +26,7 @@ interface IOpAttributes {
   target?: string | undefined;
   rel?: string | undefined;
   renderAsBlock?: boolean | undefined;
+  [key: string]: any;
 }
 interface IUrlSanitizerFn {
   (url: string): string | undefined;
