@@ -23,7 +23,7 @@ var InsertOpDenormalizer = (function () {
                 return nlObj;
             }
             return obj.assign({}, op, {
-                insert: line
+                insert: line,
             });
         });
     };

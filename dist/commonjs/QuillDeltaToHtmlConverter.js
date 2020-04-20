@@ -24,11 +24,11 @@ var QuillDeltaToHtmlConverter = (function () {
             multiLineCodeblock: true,
             multiLineParagraph: true,
             allowBackgroundClasses: false,
-            linkTarget: '_blank'
+            linkTarget: '_blank',
         }, options, {
             orderedListTag: 'ol',
             bulletListTag: 'ul',
-            listItemTag: 'li'
+            listItemTag: 'li',
         });
         var inlineStyles;
         if (!this.options.inlineStyles) {
@@ -48,7 +48,7 @@ var QuillDeltaToHtmlConverter = (function () {
             paragraphTag: this.options.paragraphTag,
             linkRel: this.options.linkRel,
             linkTarget: this.options.linkTarget,
-            allowBackgroundClasses: this.options.allowBackgroundClasses
+            allowBackgroundClasses: this.options.allowBackgroundClasses,
         };
         this.rawDeltaOps = deltaOps;
     }
@@ -69,7 +69,7 @@ var QuillDeltaToHtmlConverter = (function () {
         var groupedSameStyleBlocks = Grouper_1.Grouper.groupConsecutiveSameStyleBlocks(pairedOps, {
             blockquotes: !!this.options.multiLineBlockquote,
             header: !!this.options.multiLineHeader,
-            codeBlocks: !!this.options.multiLineCodeblock
+            codeBlocks: !!this.options.multiLineCodeblock,
         });
         var groupedOps = Grouper_1.Grouper.reduceConsecutiveSameStyleBlocksToOne(groupedSameStyleBlocks);
         var tableGrouper = new TableGrouper_1.TableGrouper();
@@ -170,7 +170,7 @@ var QuillDeltaToHtmlConverter = (function () {
         var cellElementsHtml = this._renderInlines(cell.item.ops, false);
         return (funcs_html_1.makeStartTag('td', {
             key: 'data-row',
-            value: cell.item.op.attributes.table
+            value: cell.item.op.attributes.table,
         }) +
             parts.openingTag +
             cellElementsHtml +

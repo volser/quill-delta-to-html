@@ -43,7 +43,7 @@ var Grouper = (function () {
         if (blocksOf === void 0) { blocksOf = {
             header: true,
             codeBlocks: true,
-            blockquotes: true
+            blockquotes: true,
         }; }
         return array_1.groupConsecutiveElementsWhile(groups, function (g, gPrev) {
             if (!(g instanceof group_types_1.BlockGroup) || !(gPrev instanceof group_types_1.BlockGroup)) {

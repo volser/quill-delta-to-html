@@ -7,14 +7,14 @@ var arr = require("./helpers/array");
 var OpAttributeSanitizer_1 = require("./OpAttributeSanitizer");
 var DEFAULT_INLINE_FONTS = {
     serif: 'font-family: Georgia, Times New Roman, serif',
-    monospace: 'font-family: Monaco, Courier New, monospace'
+    monospace: 'font-family: Monaco, Courier New, monospace',
 };
 exports.DEFAULT_INLINE_STYLES = {
     font: function (value) { return DEFAULT_INLINE_FONTS[value] || 'font-family:' + value; },
     size: {
         small: 'font-size: 0.75em',
         large: 'font-size: 1.5em',
-        huge: 'font-size: 2.5em'
+        huge: 'font-size: 2.5em',
     },
     indent: function (value, op) {
         var indentSize = parseInt(value, 10) * 3;
@@ -28,7 +28,7 @@ exports.DEFAULT_INLINE_STYLES = {
         else {
             return undefined;
         }
-    }
+    },
 };
 var OpToHtmlConverter = (function () {
     function OpToHtmlConverter(op, options) {
@@ -38,7 +38,7 @@ var OpToHtmlConverter = (function () {
             inlineStyles: undefined,
             encodeHtml: true,
             listItemTag: 'li',
-            paragraphTag: 'p'
+            paragraphTag: 'p',
         }, options);
     }
     OpToHtmlConverter.prototype.prefixClass = function (className) {
@@ -81,7 +81,7 @@ var OpToHtmlConverter = (function () {
         return {
             openingTag: beginTags.join(''),
             content: this.getContent(),
-            closingTag: endTags.join('')
+            closingTag: endTags.join(''),
         };
     };
     OpToHtmlConverter.prototype.getContent = function () {
@@ -129,7 +129,7 @@ var OpToHtmlConverter = (function () {
                 ['align', 'text-align'],
                 ['direction'],
                 ['font', 'font-family'],
-                ['size']
+                ['size'],
             ]);
         }
         return propsArr
@@ -228,7 +228,7 @@ var OpToHtmlConverter = (function () {
         var attrs = this.op.attributes;
         if (!this.op.isText()) {
             return [
-                this.op.isVideo() ? 'iframe' : this.op.isImage() ? 'img' : 'span'
+                this.op.isVideo() ? 'iframe' : this.op.isImage() ? 'img' : 'span',
             ];
         }
         var positionTag = this.options.paragraphTag || 'p';
@@ -239,7 +239,7 @@ var OpToHtmlConverter = (function () {
             ['header'],
             ['align', positionTag],
             ['direction', positionTag],
-            ['indent', positionTag]
+            ['indent', positionTag],
         ];
         for (var _i = 0, blocks_1 = blocks; _i < blocks_1.length; _i++) {
             var item = blocks_1[_i];
@@ -258,7 +258,7 @@ var OpToHtmlConverter = (function () {
             ['italic', 'em'],
             ['strike', 's'],
             ['underline', 'u'],
-            ['code']
+            ['code'],
         ]
             .filter(function (item) { return !!attrs[item[0]]; })
             .map(function (item) {

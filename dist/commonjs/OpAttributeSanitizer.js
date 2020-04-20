@@ -21,7 +21,7 @@ var OpAttributeSanitizer = (function () {
             'code',
             'blockquote',
             'code-block',
-            'renderAsBlock'
+            'renderAsBlock',
         ];
         var colorAttrs = ['background', 'color'];
         var font = dirtyAttrs.font, size = dirtyAttrs.size, link = dirtyAttrs.link, script = dirtyAttrs.script, list = dirtyAttrs.list, header = dirtyAttrs.header, align = dirtyAttrs.align, direction = dirtyAttrs.direction, indent = dirtyAttrs.indent, mentions = dirtyAttrs.mentions, mention = dirtyAttrs.mention, width = dirtyAttrs.width, target = dirtyAttrs.target, rel = dirtyAttrs.rel;
@@ -41,7 +41,7 @@ var OpAttributeSanitizer = (function () {
             'width',
             'target',
             'rel',
-            'code-block'
+            'code-block',
         ]);
         booleanAttrs.forEach(function (prop) {
             var v = dirtyAttrs[prop];
