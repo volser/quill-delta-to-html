@@ -28,6 +28,7 @@ interface IOpAttributes {
   align?: AlignType;
   direction?: DirectionType;
   indent?: number | undefined;
+  table?: string | undefined;
 
   mentions?: boolean | undefined;
   mention?: IMention | undefined;
@@ -63,7 +64,7 @@ class OpAttributeSanitizer {
       'code',
       'blockquote',
       'code-block',
-      'renderAsBlock'
+      'renderAsBlock',
     ];
 
     let colorAttrs = ['background', 'color'];
@@ -82,7 +83,7 @@ class OpAttributeSanitizer {
       mention,
       width,
       target,
-      rel
+      rel,
     } = dirtyAttrs;
     let codeBlock = dirtyAttrs['code-block'];
 
@@ -103,16 +104,16 @@ class OpAttributeSanitizer {
       'width',
       'target',
       'rel',
-      'code-block'
+      'code-block',
     ];
-    booleanAttrs.forEach(function(prop: string) {
+    booleanAttrs.forEach(function (prop: string) {
       var v = (<any>dirtyAttrs)[prop];
       if (v) {
         cleanAttrs[prop] = !!v;
       }
     });
 
-    colorAttrs.forEach(function(prop: string) {
+    colorAttrs.forEach(function (prop: string) {
       var val = (<any>dirtyAttrs)[prop];
       if (
         val &&
@@ -178,7 +179,7 @@ class OpAttributeSanitizer {
     if (
       find(
         [AlignType.Center, AlignType.Right, AlignType.Justify, AlignType.Left],
-        a => a === align
+        (a) => a === align
       )
     ) {
       cleanAttrs.align = align;

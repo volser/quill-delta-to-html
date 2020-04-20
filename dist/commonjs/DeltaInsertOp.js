@@ -17,6 +17,7 @@ var DeltaInsertOp = (function () {
         var attrs = this.attributes;
         return !!(attrs.blockquote ||
             attrs.list ||
+            attrs.table ||
             attrs['code-block'] ||
             attrs.header ||
             attrs.align ||
@@ -28,6 +29,9 @@ var DeltaInsertOp = (function () {
     };
     DeltaInsertOp.prototype.isHeader = function () {
         return !!this.attributes.header;
+    };
+    DeltaInsertOp.prototype.isTable = function () {
+        return !!this.attributes.table;
     };
     DeltaInsertOp.prototype.isSameHeaderAs = function (op) {
         return op.attributes.header === this.attributes.header && this.isHeader();
@@ -82,6 +86,11 @@ var DeltaInsertOp = (function () {
         return (!!op.attributes.list &&
             (this.attributes.list === op.attributes.list ||
                 (op.isACheckList() && this.isACheckList())));
+    };
+    DeltaInsertOp.prototype.isSameTableRowAs = function (op) {
+        return (!!op.isTable() &&
+            this.isTable() &&
+            this.attributes.table === op.attributes.table);
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;

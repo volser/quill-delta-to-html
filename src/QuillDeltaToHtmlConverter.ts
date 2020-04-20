@@ -2,7 +2,7 @@ import { InsertOpsConverter } from './InsertOpsConverter';
 import {
   OpToHtmlConverter,
   IOpToHtmlConverterOptions,
-  IInlineStyles
+  IInlineStyles,
 } from './OpToHtmlConverter';
 import { DeltaInsertOp } from './DeltaInsertOp';
 import { Grouper } from './grouper/Grouper';
@@ -13,13 +13,17 @@ import {
   ListGroup,
   ListItem,
   TDataGroup,
-  BlotBlock
+  BlotBlock,
+  TableGroup,
+  TableRow,
+  TableCell,
 } from './grouper/group-types';
 import { ListNester } from './grouper/ListNester';
 import { makeStartTag, makeEndTag, encodeHtml } from './funcs-html';
 import * as obj from './helpers/object';
 import { GroupType } from './value-types';
 import { IOpAttributeSanitizerOptions } from './OpAttributeSanitizer';
+import { TableGrouper } from './grouper/TableGrouper';
 
 interface IQuillDeltaToHtmlConverterOptions
   extends IOpAttributeSanitizerOptions,
@@ -55,13 +59,13 @@ class QuillDeltaToHtmlConverter {
         multiLineCodeblock: true,
         multiLineParagraph: true,
         allowBackgroundClasses: false,
-        linkTarget: '_blank'
+        linkTarget: '_blank',
       },
       options,
       {
         orderedListTag: 'ol',
         bulletListTag: 'ul',
-        listItemTag: 'li'
+        listItemTag: 'li',
       }
     );
 
@@ -82,7 +86,7 @@ class QuillDeltaToHtmlConverter {
       paragraphTag: this.options.paragraphTag,
       linkRel: this.options.linkRel,
       linkTarget: this.options.linkTarget,
-      allowBackgroundClasses: this.options.allowBackgroundClasses
+      allowBackgroundClasses: this.options.allowBackgroundClasses,
     };
     this.rawDeltaOps = deltaOps;
   }
@@ -109,13 +113,17 @@ class QuillDeltaToHtmlConverter {
       {
         blockquotes: !!this.options.multiLineBlockquote,
         header: !!this.options.multiLineHeader,
-        codeBlocks: !!this.options.multiLineCodeblock
+        codeBlocks: !!this.options.multiLineCodeblock,
       }
     );
 
     var groupedOps = Grouper.reduceConsecutiveSameStyleBlocksToOne(
       groupedSameStyleBlocks
     );
+
+    var tableGrouper = new TableGrouper();
+    groupedOps = tableGrouper.group(groupedOps);
+
     var listNester = new ListNester();
     return listNester.nest(groupedOps);
   }
@@ -123,10 +131,14 @@ class QuillDeltaToHtmlConverter {
   convert() {
     let groups = this.getGroupedOps();
     return groups
-      .map(group => {
+      .map((group) => {
         if (group instanceof ListGroup) {
           return this._renderWithCallbacks(GroupType.List, group, () =>
             this._renderList(<ListGroup>group)
+          );
+        } else if (group instanceof TableGroup) {
+          return this._renderWithCallbacks(GroupType.Table, group, () =>
+            this._renderTable(<TableGroup>group)
           );
         } else if (group instanceof BlockGroup) {
           var g = <BlockGroup>group;
@@ -201,6 +213,40 @@ class QuillDeltaToHtmlConverter {
     );
   }
 
+  _renderTable(table: TableGroup): string {
+    return (
+      makeStartTag('table') +
+      makeStartTag('tbody') +
+      table.rows.map((row: TableRow) => this._renderTableRow(row)).join('') +
+      makeEndTag('tbody') +
+      makeEndTag('table')
+    );
+  }
+
+  _renderTableRow(row: TableRow): string {
+    return (
+      makeStartTag('tr') +
+      row.cells.map((cell: TableCell) => this._renderTableCell(cell)).join('') +
+      makeEndTag('tr')
+    );
+  }
+
+  _renderTableCell(cell: TableCell): string {
+    var converter = new OpToHtmlConverter(cell.item.op, this.converterOptions);
+    var parts = converter.getHtmlParts();
+    var cellElementsHtml = this._renderInlines(cell.item.ops, false);
+    return (
+      makeStartTag('td', {
+        key: 'data-row',
+        value: cell.item.op.attributes.table,
+      }) +
+      parts.openingTag +
+      cellElementsHtml +
+      parts.closingTag +
+      makeEndTag('td')
+    );
+  }
+
   _renderBlock(bop: DeltaInsertOp, ops: DeltaInsertOp[]) {
     var converter = new OpToHtmlConverter(bop, this.converterOptions);
     var htmlParts = converter.getHtmlParts();
@@ -210,7 +256,7 @@ class QuillDeltaToHtmlConverter {
         htmlParts.openingTag +
         encodeHtml(
           ops
-            .map(iop =>
+            .map((iop) =>
               iop.isCustom() ? this._renderCustom(iop, bop) : iop.insert.value
             )
             .join('')
@@ -219,7 +265,7 @@ class QuillDeltaToHtmlConverter {
       );
     }
 
-    var inlines = ops.map(op => this._renderInline(op, bop)).join('');
+    var inlines = ops.map((op) => this._renderInline(op, bop)).join('');
     return htmlParts.openingTag + (inlines || BrTag) + htmlParts.closingTag;
   }
 
@@ -246,7 +292,7 @@ class QuillDeltaToHtmlConverter {
       startParaTag +
       html
         .split(BrTag)
-        .map(v => {
+        .map((v) => {
           return v === '' ? BrTag : v;
         })
         .join(endParaTag + startParaTag) +
