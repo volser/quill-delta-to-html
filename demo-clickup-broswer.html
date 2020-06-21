@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clickup_table_demo</title>
+</head>
+<body>
+  <div id="converted-view"></div>
+
+  <script src="dist/browser/QuillDeltaToHtmlConverter.bundle.js"></script>
+  <script>
+    // with new table
+    var delta = {"ops":[{"insert":"\n"},{"attributes":{"table-col":{"width":"150"}},"insert":"\n\n"},{"insert":"234324"},{"attributes":{"table-cell-line":{"rowspan":"1","colspan":"1","row":"row-vog0hb","cell":"cell-te8iog"},"row":"row-vog0hb","rowspan":"1","colspan":"1"},"insert":"\n"},{"insert":"324324"},{"attributes":{"table-cell-line":{"rowspan":"1","colspan":"1","row":"row-vog0hb","cell":"cell-leoqv7"},"row":"row-vog0hb","rowspan":"1","colspan":"1"},"insert":"\n"},{"insert":"234"},{"attributes":{"table-cell-line":{"rowspan":"1","colspan":"1","row":"row-f01cl4","cell":"cell-usqwfp"},"row":"row-f01cl4","rowspan":"1","colspan":"1"},"insert":"\n"},{"insert":"213132312"},{"attributes":{"table-cell-line":{"rowspan":"1","colspan":"1","row":"row-f01cl4","cell":"cell-usqwfp"},"row":"row-f01cl4","rowspan":"1","colspan":"1"},"insert":"\n"},{"insert":"234234"},{"attributes":{"table-cell-line":{"rowspan":"1","colspan":"1","row":"row-f01cl4","cell":"cell-i5xnig"},"row":"row-f01cl4","rowspan":"1","colspan":"1"},"insert":"\n"},{"insert":"123123123"},{"attributes":{"table-cell-line":{"rowspan":"1","colspan":"1","row":"row-f01cl4","cell":"cell-i5xnig"},"row":"row-f01cl4","rowspan":"1","colspan":"1"},"insert":"\n"},{"insert":"\n"}]}
+    // with new list
+    var delta1 = {"ops":[{"insert":"sdflk"},{"attributes":{"bold":true},"insert":"sjflk"},{"insert":"jssfsdfsf\nsdfsdfsdf\nsdfsdfsdfsdfsdf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfdsfdsf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfsdfsf\nsdfsd\nfsdfsdsdffsdfsdf\nsdfsf\n"},{"attributes":{"link":"www.baidu.com"},"insert":"www.baidu.com"},{"insert":"\n"}]}
+    // with old list and old table
+    var delta2 = {"ops":[{"insert":"123123\n13123123113"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123\nsdfdsf\ndsf"},{"attributes":{"table":"row-uaw4"},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"table":"row-uaw4"},"insert":"\n"},{"insert":"sdfsd"},{"attributes":{"table":"row-iug2"},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"table":"row-iug2"},"insert":"\n"},{"insert":"\n"}]}
+
+    var qdc = new window.QuillDeltaToHtmlConverter(delta2.ops, window.opts_ || {});
+    var html = qdc.convert();
+    console.log(qdc.getGroupedOps())
+    console.log(html);
+    document.getElementById('converted-view').innerHTML = html;
+  </script>
+</body>
+</html>
