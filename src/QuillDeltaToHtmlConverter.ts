@@ -137,6 +137,7 @@ class QuillDeltaToHtmlConverter {
 
   convert() {
     let groups = this.getGroupedOps();
+    console.log(groups);
     return groups
       .map((group) => {
         if (group instanceof ListGroup) {
@@ -144,7 +145,7 @@ class QuillDeltaToHtmlConverter {
             this._renderList(<ListGroup>group)
           );
         } else if (group instanceof TableGroup) {
-          return this._renderWithCallbacks(GroupType.Table, group, () =>
+          return this._renderWithCallbacks(GroupType.TableCellLine, group, () =>
             this._renderTable(<TableGroup>group)
           );
         } else if (group instanceof BlockGroup) {
@@ -239,19 +240,21 @@ class QuillDeltaToHtmlConverter {
   }
 
   _renderTableCell(cell: TableCell): string {
-    var converter = new OpToHtmlConverter(cell.item.op, this.converterOptions);
-    var parts = converter.getHtmlParts();
-    var cellElementsHtml = this._renderInlines(cell.item.ops, false);
-    return (
-      makeStartTag('td', {
-        key: 'data-row',
-        value: cell.item.op.attributes.table,
-      }) +
-      parts.openingTag +
-      cellElementsHtml +
-      parts.closingTag +
-      makeEndTag('td')
-    );
+    console.log(cell);
+    return '';
+    // var converter = new OpToHtmlConverter(cell.item.op, this.converterOptions);
+    // var parts = converter.getHtmlParts();
+    // var cellElementsHtml = this._renderInlines(cell.item.ops, false);
+    // return (
+    //   makeStartTag('td', {
+    //     key: 'data-row',
+    //     value: cell.item.op.attributes.table,
+    //   }) +
+    //   parts.openingTag +
+    //   cellElementsHtml +
+    //   parts.closingTag +
+    //   makeEndTag('td')
+    // );
   }
 
   _renderBlock(bop: DeltaInsertOp, ops: DeltaInsertOp[]) {

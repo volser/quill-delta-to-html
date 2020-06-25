@@ -30,7 +30,8 @@ declare enum GroupType {
   InlineGroup = 'inline-group',
   List = 'list',
   Video = 'video',
-  Table = 'table',
+  TableCellLine = 'table-cell-line',
+  TableCol = 'table-col',
 }
 export {
   NewLine,

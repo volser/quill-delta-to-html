@@ -43,6 +43,7 @@ var GroupType;
     GroupType["InlineGroup"] = "inline-group";
     GroupType["List"] = "list";
     GroupType["Video"] = "video";
-    GroupType["Table"] = "table";
+    GroupType["TableCellLine"] = "table-cell-line";
+    GroupType["TableCol"] = "table-col";
 })(GroupType || (GroupType = {}));
 exports.GroupType = GroupType;

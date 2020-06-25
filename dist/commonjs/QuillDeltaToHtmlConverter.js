@@ -93,6 +93,7 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype.convert = function () {
         var _this = this;
         var groups = this.getGroupedOps();
+        console.log(groups);
         return groups
             .map(function (group) {
             if (group instanceof group_types_1.ListGroup) {
@@ -101,7 +102,7 @@ var QuillDeltaToHtmlConverter = (function () {
                 });
             }
             else if (group instanceof group_types_1.TableGroup) {
-                return _this._renderWithCallbacks(value_types_1.GroupType.Table, group, function () {
+                return _this._renderWithCallbacks(value_types_1.GroupType.TableCellLine, group, function () {
                     return _this._renderTable(group);
                 });
             }
@@ -178,17 +179,8 @@ var QuillDeltaToHtmlConverter = (function () {
             funcs_html_1.makeEndTag('tr'));
     };
     QuillDeltaToHtmlConverter.prototype._renderTableCell = function (cell) {
-        var converter = new OpToHtmlConverter_1.OpToHtmlConverter(cell.item.op, this.converterOptions);
-        var parts = converter.getHtmlParts();
-        var cellElementsHtml = this._renderInlines(cell.item.ops, false);
-        return (funcs_html_1.makeStartTag('td', {
-            key: 'data-row',
-            value: cell.item.op.attributes.table,
-        }) +
-            parts.openingTag +
-            cellElementsHtml +
-            parts.closingTag +
-            funcs_html_1.makeEndTag('td'));
+        console.log(cell);
+        return '';
     };
     QuillDeltaToHtmlConverter.prototype._renderBlock = function (bop, ops) {
         var _this = this;

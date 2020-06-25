@@ -1,4 +1,5 @@
 import { DeltaInsertOp } from './../DeltaInsertOp';
+import { IOpAttributes } from './../OpAttributeSanitizer';
 
 class InlineGroup {
   readonly ops: DeltaInsertOp[];
@@ -43,22 +44,51 @@ class ListItem {
 
 class TableGroup {
   rows: TableRow[];
-  constructor(rows: TableRow[]) {
+  colGroup: TableColGroup;
+  constructor(rows: TableRow[], colGroup: TableColGroup) {
     this.rows = rows;
+    this.colGroup = colGroup;
+  }
+}
+
+class TableColGroup {
+  cols: TableCol[];
+  constructor(cols: TableCol[]) {
+    this.cols = cols;
+  }
+}
+
+class TableCol {
+  item: BlockGroup;
+  constructor(item: BlockGroup) {
+    this.item = item;
   }
 }
 
 class TableRow {
   cells: TableCell[];
-  constructor(cells: TableCell[]) {
+  readonly row: string | undefined;
+  constructor(cells: TableCell[], row: string | undefined) {
     this.cells = cells;
+    this.row = row;
   }
 }
 
 class TableCell {
+  lines: TableCellLine[];
+  readonly attrs: IOpAttributes | undefined;
+  constructor(lines: TableCellLine[], attributes: IOpAttributes) {
+    this.lines = lines;
+    this.attrs = attributes;
+  }
+}
+
+class TableCellLine {
   readonly item: BlockGroup;
+  readonly attrs: IOpAttributes | undefined;
   constructor(item: BlockGroup) {
     this.item = item;
+    this.attrs = item.op.attributes['table-cell-line'];
   }
 }
 
@@ -69,8 +99,11 @@ type TDataGroup =
   | ListItem
   | ListGroup
   | TableGroup
+  | TableColGroup
+  | TableCol
   | TableRow
-  | TableCell;
+  | TableCell
+  | TableCellLine;
 
 export {
   VideoItem,
@@ -80,7 +113,10 @@ export {
   ListGroup,
   ListItem,
   TableGroup,
+  TableColGroup,
+  TableCol,
   TableRow,
   TableCell,
+  TableCellLine,
   TDataGroup,
 };

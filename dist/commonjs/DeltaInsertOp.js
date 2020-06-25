@@ -20,7 +20,8 @@ var DeltaInsertOp = (function () {
     DeltaInsertOp.prototype.isContainerBlock = function () {
         return (this.isBlockquote() ||
             this.isList() ||
-            this.isTable() ||
+            this.isTableCellLine() ||
+            this.isTableCol() ||
             this.isCodeBlock() ||
             this.isHeader() ||
             this.isBlockAttribute() ||
@@ -36,8 +37,11 @@ var DeltaInsertOp = (function () {
     DeltaInsertOp.prototype.isHeader = function () {
         return !!this.attributes.header;
     };
-    DeltaInsertOp.prototype.isTable = function () {
-        return !!this.attributes.table;
+    DeltaInsertOp.prototype.isTableCellLine = function () {
+        return !!this.attributes['table-cell-line'];
+    };
+    DeltaInsertOp.prototype.isTableCol = function () {
+        return !!this.attributes['table-col'];
     };
     DeltaInsertOp.prototype.isSameHeaderAs = function (op) {
         return op.attributes.header === this.attributes.header && this.isHeader();
@@ -98,10 +102,12 @@ var DeltaInsertOp = (function () {
             (this.attributes.list === op.attributes.list ||
                 (op.isACheckList() && this.isACheckList())));
     };
-    DeltaInsertOp.prototype.isSameTableRowAs = function (op) {
-        return (!!op.isTable() &&
-            this.isTable() &&
-            this.attributes.table === op.attributes.table);
+    DeltaInsertOp.prototype.isSameTableCellAs = function (op) {
+        return (!!op.isTableCellLine() &&
+            this.isTableCellLine() &&
+            !!this.attributes['table-cell-line'] &&
+            !!op.attributes['table-cell-line'] &&
+            this.attributes['table-cell-line'].cell === op.attributes['table-cell-line'].cell);
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;

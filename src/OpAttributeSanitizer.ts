@@ -5,6 +5,17 @@ import { encodeLink } from './funcs-html';
 import { IMention } from './mentions/MentionSanitizer';
 import { find } from './helpers/array';
 
+interface TableCellLineAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+}
+
+interface TableColAttributes {
+  width?: string | undefined;
+}
+
 interface IOpAttributes {
   background?: string | undefined;
   color?: string | undefined;
@@ -29,6 +40,11 @@ interface IOpAttributes {
   direction?: DirectionType;
   indent?: number | undefined;
   table?: string | undefined;
+  'table-cell-line'?: TableCellLineAttributes | undefined;
+  row?: string | undefined;
+  colspan?: string | undefined;
+  rowspan?: string | undefined;
+  'table-col'?: TableColAttributes | undefined;
 
   mentions?: boolean | undefined;
   mention?: IMention | undefined;

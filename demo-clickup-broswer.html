@@ -17,9 +17,8 @@
     // with old list and old table
     var delta2 = {"ops":[{"insert":"123123\n13123123113"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123"},{"attributes":{"list":"ordered"},"insert":"\n"},{"insert":"123123\nsdfdsf\ndsf"},{"attributes":{"table":"row-uaw4"},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"table":"row-uaw4"},"insert":"\n"},{"insert":"sdfsd"},{"attributes":{"table":"row-iug2"},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"table":"row-iug2"},"insert":"\n"},{"insert":"\n"}]}
 
-    var qdc = new window.QuillDeltaToHtmlConverter(delta2.ops, window.opts_ || {});
+    var qdc = new window.QuillDeltaToHtmlConverter(delta.ops, window.opts_ || {});
     var html = qdc.convert();
-    console.log(qdc.getGroupedOps())
     console.log(html);
     document.getElementById('converted-view').innerHTML = html;
   </script>
