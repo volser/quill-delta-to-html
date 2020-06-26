@@ -107,7 +107,8 @@ var DeltaInsertOp = (function () {
             this.isTableCellLine() &&
             !!this.attributes['table-cell-line'] &&
             !!op.attributes['table-cell-line'] &&
-            this.attributes['table-cell-line'].cell === op.attributes['table-cell-line'].cell);
+            this.attributes['table-cell-line'].cell ===
+                op.attributes['table-cell-line'].cell);
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;

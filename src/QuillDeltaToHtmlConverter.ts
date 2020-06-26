@@ -17,6 +17,9 @@ import {
   TableGroup,
   TableRow,
   TableCell,
+  TableCol,
+  TableColGroup,
+  TableCellLine,
 } from './grouper/group-types';
 import { ListNester } from './grouper/ListNester';
 import { makeStartTag, makeEndTag, encodeHtml } from './funcs-html';
@@ -137,7 +140,7 @@ class QuillDeltaToHtmlConverter {
 
   convert() {
     let groups = this.getGroupedOps();
-    console.log(groups);
+
     return groups
       .map((group) => {
         if (group instanceof ListGroup) {
@@ -222,39 +225,88 @@ class QuillDeltaToHtmlConverter {
   }
 
   _renderTable(table: TableGroup): string {
+    const tableColGroup: TableColGroup = table.colGroup;
+    const tableWidth: number = tableColGroup.cols.reduce(
+      (result: number, col: TableCol) => {
+        if (col.item.op.attributes['table-col']) {
+          result += parseInt(
+            col.item.op.attributes['table-col']!.width || '0',
+            10
+          );
+        }
+        return result;
+      },
+      0
+    );
+
     return (
-      makeStartTag('table') +
+      makeStartTag('div', [{ key: 'class', value: 'clickup-table-view' }]) +
+      makeStartTag('table', [
+        { key: 'class', value: 'clickup-table' },
+        { key: 'style', value: `width: ${tableWidth}px` },
+      ]) +
+      makeStartTag('colgroup') +
+      tableColGroup.cols
+        .map((col: TableCol) => this._renderTableCol(col))
+        .join('') +
+      makeEndTag('colgroup') +
       makeStartTag('tbody') +
       table.rows.map((row: TableRow) => this._renderTableRow(row)).join('') +
       makeEndTag('tbody') +
-      makeEndTag('table')
+      makeEndTag('table') +
+      makeEndTag('div')
     );
+  }
+
+  _renderTableCol(col: TableCol): string {
+    let colWidth: any;
+    if (col.item.op.attributes['table-col']) {
+      colWidth = col.item.op.attributes['table-col']!.width || '0';
+    }
+
+    return makeStartTag('col', [{ key: 'width', value: colWidth }]);
   }
 
   _renderTableRow(row: TableRow): string {
     return (
-      makeStartTag('tr') +
+      makeStartTag('tr', [{ key: 'data-row', value: row.row }]) +
       row.cells.map((cell: TableCell) => this._renderTableCell(cell)).join('') +
       makeEndTag('tr')
     );
   }
 
   _renderTableCell(cell: TableCell): string {
-    console.log(cell);
-    return '';
-    // var converter = new OpToHtmlConverter(cell.item.op, this.converterOptions);
-    // var parts = converter.getHtmlParts();
-    // var cellElementsHtml = this._renderInlines(cell.item.ops, false);
-    // return (
-    //   makeStartTag('td', {
-    //     key: 'data-row',
-    //     value: cell.item.op.attributes.table,
-    //   }) +
-    //   parts.openingTag +
-    //   cellElementsHtml +
-    //   parts.closingTag +
-    //   makeEndTag('td')
-    // );
+    return (
+      makeStartTag('td', [
+        { key: 'data-row', value: cell.attrs!.row },
+        { key: 'rowspan', value: cell.attrs!.rowspan },
+        { key: 'colspan', value: cell.attrs!.colspan },
+      ]) +
+      cell.lines
+        .map((line: TableCellLine) => this._renderTableCellLine(line))
+        .join('') +
+      makeEndTag('td')
+    );
+  }
+
+  _renderTableCellLine(line: TableCellLine): string {
+    var converter = new OpToHtmlConverter(line.item.op, this.converterOptions);
+    var parts = converter.getHtmlParts();
+    var cellElementsHtml = this._renderInlines(line.item.ops, false);
+
+    return (
+      makeStartTag('p', [
+        { key: 'class', value: 'qlbt-cell-line' },
+        { key: 'data-row', value: line.attrs!.row },
+        { key: 'data-cell', value: line.attrs!.cell },
+        { key: 'rowspan', value: line.attrs!.rowspan },
+        { key: 'colspan', value: line.attrs!.colspan },
+      ]) +
+      parts.openingTag +
+      cellElementsHtml +
+      parts.closingTag +
+      makeEndTag('p')
+    );
   }
 
   _renderBlock(bop: DeltaInsertOp, ops: DeltaInsertOp[]) {

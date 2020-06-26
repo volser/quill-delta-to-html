@@ -25,13 +25,9 @@ var TableGrouper = (function () {
                 if (item instanceof group_types_1.BlockGroup && item.op.isTableCellLine()) {
                     result.push(new group_types_1.TableGroup([
                         new group_types_1.TableRow([
-                            new group_types_1.TableCell([
-                                new group_types_1.TableCellLine(item)
-                            ], item.op.attributes)
-                        ], item.op.attributes.row)
-                    ], new group_types_1.TableColGroup([
-                        new group_types_1.TableCol(item)
-                    ])));
+                            new group_types_1.TableCell([new group_types_1.TableCellLine(item)], item.op.attributes),
+                        ], item.op.attributes.row),
+                    ], new group_types_1.TableColGroup([new group_types_1.TableCol(item)])));
                 }
                 else if (item instanceof group_types_1.TableColGroup) {
                     tableColGroup = item;
@@ -49,7 +45,8 @@ var TableGrouper = (function () {
         var grouped = array_1.groupConsecutiveElementsWhile(items, function (g, gPrev) {
             return (g instanceof group_types_1.TableCell &&
                 gPrev instanceof group_types_1.TableCell &&
-                (g.attrs ? g.attrs.row : undefined) === (gPrev.attrs ? gPrev.attrs.row : undefined));
+                (g.attrs ? g.attrs.row : undefined) ===
+                    (gPrev.attrs ? gPrev.attrs.row : undefined));
         });
         return grouped.map(function (item) {
             var row;
@@ -67,9 +64,7 @@ var TableGrouper = (function () {
                     row = undefined;
                 }
             }
-            return new group_types_1.TableRow(Array.isArray(item)
-                ? item.map(function (it) { return it; })
-                : [item], row);
+            return new group_types_1.TableRow(Array.isArray(item) ? item.map(function (it) { return it; }) : [item], row);
         });
     };
     TableGrouper.prototype.convertTableBlocksToTableCells = function (items) {
