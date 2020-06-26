@@ -854,6 +854,7 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype.getGroupedOps = function () {
         var deltaOps = InsertOpsConverter_1.InsertOpsConverter.convert(this.rawDeltaOps, this.options);
         var pairedOps = Grouper_1.Grouper.pairOpsWithTheirBlock(deltaOps);
+        console.log(pairedOps);
         var groupedSameStyleBlocks = Grouper_1.Grouper.groupConsecutiveSameStyleBlocks(pairedOps, {
             blockquotes: !!this.options.multiLineBlockquote,
             header: !!this.options.multiLineHeader,
@@ -948,15 +949,15 @@ var QuillDeltaToHtmlConverter = (function () {
             }
             return result;
         }, 0);
-        return (funcs_html_1.makeStartTag('div', [
-            { key: 'class', value: 'clickup-table-view' },
-        ]) +
+        return (funcs_html_1.makeStartTag('div', [{ key: 'class', value: 'clickup-table-view' }]) +
             funcs_html_1.makeStartTag('table', [
                 { key: 'class', value: 'clickup-table' },
-                { key: 'style', value: "width: " + tableWidth + "px" }
+                { key: 'style', value: "width: " + tableWidth + "px" },
             ]) +
             funcs_html_1.makeStartTag('colgroup') +
-            tableColGroup.cols.map(function (col) { return _this._renderTableCol(col); }).join('') +
+            tableColGroup.cols
+                .map(function (col) { return _this._renderTableCol(col); })
+                .join('') +
             funcs_html_1.makeEndTag('colgroup') +
             funcs_html_1.makeStartTag('tbody') +
             table.rows.map(function (row) { return _this._renderTableRow(row); }).join('') +
@@ -969,15 +970,11 @@ var QuillDeltaToHtmlConverter = (function () {
         if (col.item.op.attributes['table-col']) {
             colWidth = col.item.op.attributes['table-col'].width || '0';
         }
-        return (funcs_html_1.makeStartTag('col', [
-            { key: 'width', value: colWidth }
-        ]));
+        return funcs_html_1.makeStartTag('col', [{ key: 'width', value: colWidth }]);
     };
     QuillDeltaToHtmlConverter.prototype._renderTableRow = function (row) {
         var _this = this;
-        return (funcs_html_1.makeStartTag('tr', [
-            { key: 'data-row', value: row.row }
-        ]) +
+        return (funcs_html_1.makeStartTag('tr', [{ key: 'data-row', value: row.row }]) +
             row.cells.map(function (cell) { return _this._renderTableCell(cell); }).join('') +
             funcs_html_1.makeEndTag('tr'));
     };
@@ -988,7 +985,9 @@ var QuillDeltaToHtmlConverter = (function () {
             { key: 'rowspan', value: cell.attrs.rowspan },
             { key: 'colspan', value: cell.attrs.colspan },
         ]) +
-            cell.lines.map(function (line) { return _this._renderTableCellLine(line); }).join('') +
+            cell.lines
+                .map(function (line) { return _this._renderTableCellLine(line); })
+                .join('') +
             funcs_html_1.makeEndTag('td'));
     };
     QuillDeltaToHtmlConverter.prototype._renderTableCellLine = function (line) {
@@ -1000,7 +999,7 @@ var QuillDeltaToHtmlConverter = (function () {
             { key: 'data-row', value: line.attrs.row },
             { key: 'data-cell', value: line.attrs.cell },
             { key: 'rowspan', value: line.attrs.rowspan },
-            { key: 'colspan', value: line.attrs.colspan }
+            { key: 'colspan', value: line.attrs.colspan },
         ]) +
             parts.openingTag +
             cellElementsHtml +

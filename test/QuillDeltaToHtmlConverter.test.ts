@@ -322,177 +322,174 @@ describe('QuillDeltaToHtmlConverter', function () {
       );
     });
 
-    it('should render empty table', () => {
-      let ops = [
-        {
-          insert: '\n\n\n',
-          attributes: {
-            table: 'row-1',
-          },
-        },
-        {
-          attributes: {
-            table: 'row-2',
-          },
-          insert: '\n\n\n',
-        },
-        {
-          attributes: {
-            table: 'row-3',
-          },
-          insert: '\n\n\n',
-        },
-        {
-          insert: '\n',
-        },
-      ];
+    // it('should render empty table', () => {
+    //   let ops = [
+    //     {
+    //       insert: '\n\n\n',
+    //       attributes: {
+    //         table: 'row-1',
+    //       },
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-2',
+    //       },
+    //       insert: '\n\n\n',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-3',
+    //       },
+    //       insert: '\n\n\n',
+    //     },
+    //     {
+    //       insert: '\n',
+    //     },
+    //   ];
 
-      let qdc = new QuillDeltaToHtmlConverter(ops);
-      assert.equal(
-        qdc.convert(),
-        [
-          `<table><tbody>`,
-          `<tr><td data-row="row-1"><br/></td><td data-row="row-1"><br/></td><td data-row="row-1"><br/></td></tr>`,
-          `<tr><td data-row="row-2"><br/></td><td data-row="row-2"><br/></td><td data-row="row-2"><br/></td></tr>`,
-          `<tr><td data-row="row-3"><br/></td><td data-row="row-3"><br/></td><td data-row="row-3"><br/></td></tr>`,
-          `</tbody></table>`,
-          `<p><br/></p>`,
-        ].join('')
-      );
-    });
+    //   let qdc = new QuillDeltaToHtmlConverter(ops);
+    //   assert.equal(
+    //     qdc.convert(),
+    //     [
+    //       `<table><tbody>`,
+    //       `<tr><td data-row="row-1"><br/></td><td data-row="row-1"><br/></td><td data-row="row-1"><br/></td></tr>`,
+    //       `<tr><td data-row="row-2"><br/></td><td data-row="row-2"><br/></td><td data-row="row-2"><br/></td></tr>`,
+    //       `<tr><td data-row="row-3"><br/></td><td data-row="row-3"><br/></td><td data-row="row-3"><br/></td></tr>`,
+    //       `</tbody></table>`,
+    //       `<p><br/></p>`,
+    //     ].join('')
+    //   );
+    // });
 
-    it('should render singe cell table', () => {
-      let ops = [
-        {
-          insert: 'cell',
-        },
-        {
-          insert: '\n',
-          attributes: {
-            table: 'row-1',
-          },
-        },
-      ];
+    // it('should render singe cell table', () => {
+    //   let ops = [
+    //     {
+    //       insert: 'cell',
+    //     },
+    //     {
+    //       insert: '\n',
+    //       attributes: {
+    //         table: 'row-1',
+    //       },
+    //     },
+    //   ];
 
-      let qdc = new QuillDeltaToHtmlConverter(ops);
-      assert.equal(
-        qdc.convert(),
-        [
-          `<table><tbody>`,
-          `<tr><td data-row="row-1">cell</td></tr>`,
-          `</tbody></table>`,
-        ].join('')
-      );
-    });
+    //   let qdc = new QuillDeltaToHtmlConverter(ops);
+    //   assert.equal(
+    //     qdc.convert(),
+    //     [
+    //       `<table><tbody>`,
+    //       `<tr><td data-row="row-1">cell</td></tr>`,
+    //       `</tbody></table>`,
+    //     ].join('')
+    //   );
+    // });
 
-    it('should render filled table', () => {
-      let ops = [
-        {
-          insert: '11',
-        },
-        {
-          attributes: {
-            table: 'row-1',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '12',
-        },
-        {
-          attributes: {
-            table: 'row-1',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '13',
-        },
-        {
-          attributes: {
-            table: 'row-1',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '21',
-        },
-        {
-          attributes: {
-            table: 'row-2',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '22',
-        },
-        {
-          attributes: {
-            table: 'row-2',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '23',
-        },
-        {
-          attributes: {
-            table: 'row-2',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '31',
-        },
-        {
-          attributes: {
-            table: 'row-3',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '32',
-        },
-        {
-          attributes: {
-            table: 'row-3',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '33',
-        },
-        {
-          attributes: {
-            table: 'row-3',
-          },
-          insert: '\n',
-        },
-        {
-          insert: '\n',
-        },
-      ];
+    // it('should render filled table', () => {
+    //   let ops = [
+    //     {
+    //       insert: '11',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-1',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '12',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-1',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '13',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-1',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '21',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-2',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '22',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-2',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '23',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-2',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '31',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-3',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '32',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-3',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '33',
+    //     },
+    //     {
+    //       attributes: {
+    //         table: 'row-3',
+    //       },
+    //       insert: '\n',
+    //     },
+    //     {
+    //       insert: '\n',
+    //     },
+    //   ];
 
-      let qdc = new QuillDeltaToHtmlConverter(ops);
-      assert.equal(
-        qdc.convert(),
-        [
-          `<table><tbody>`,
-          `<tr><td data-row="row-1">11</td><td data-row="row-1">12</td><td data-row="row-1">13</td></tr>`,
-          `<tr><td data-row="row-2">21</td><td data-row="row-2">22</td><td data-row="row-2">23</td></tr>`,
-          `<tr><td data-row="row-3">31</td><td data-row="row-3">32</td><td data-row="row-3">33</td></tr>`,
-          `</tbody></table>`,
-          `<p><br/></p>`,
-        ].join('')
-      );
-    });
+    //   let qdc = new QuillDeltaToHtmlConverter(ops);
+    //   assert.equal(
+    //     qdc.convert(),
+    //     [
+    //       `<table><tbody>`,
+    //       `<tr><td data-row="row-1">11</td><td data-row="row-1">12</td><td data-row="row-1">13</td></tr>`,
+    //       `<tr><td data-row="row-2">21</td><td data-row="row-2">22</td><td data-row="row-2">23</td></tr>`,
+    //       `<tr><td data-row="row-3">31</td><td data-row="row-3">32</td><td data-row="row-3">33</td></tr>`,
+    //       `</tbody></table>`,
+    //       `<p><br/></p>`,
+    //     ].join('')
+    //   );
+    // });
 
     // test case for cu-table
     it('should render empty cu-table', () => {
       let ops = [
-        {
-          insert: '\n',
-        },
         {
           attributes: {
             'table-col': { width: '150' },
@@ -625,9 +622,6 @@ describe('QuillDeltaToHtmlConverter', function () {
           },
           insert: '\n',
         },
-        {
-          insert: '\n',
-        },
       ];
 
       let qdc = new QuillDeltaToHtmlConverter(ops);
@@ -635,25 +629,25 @@ describe('QuillDeltaToHtmlConverter', function () {
         qdc.convert(),
         [
           `<div class="clickup-table-view">`,
-          `<table class="clickup-table" style="width: 450px;">`,
+          `<table class="clickup-table" style="width: 450px">`,
           `<colgroup>`,
-          `<col width="150"><br></col><col width="150"><br></col><col width="150"><br></col>`,
+          `<col width="150"><col width="150"><col width="150">`,
           `</colgroup>`,
           `<tbody>`,
           `<tr data-row="row-dvagmt">`,
-          `<td data-row="row-dvagmt" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-383p7o" data-rowspan="1" data-colspan="1"><br></p></td>`,
-          `<td data-row="row-dvagmt" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-kdrmch" data-rowspan="1" data-colspan="1"><br></p></td>`,
-          `<td data-row="row-dvagmt" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-ljjq9j" data-rowspan="1" data-colspan="1"><br></p></td>`,
+          `<td data-row="row-dvagmt" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-383p7o" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `<td data-row="row-dvagmt" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-kdrmch" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `<td data-row="row-dvagmt" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-ljjq9j" data-rowspan="1" data-colspan="1"><br/></p></td>`,
           '</tr>',
           `<tr data-row="row-929dk8">`,
-          `<td data-row="row-929dk8" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-lj7h6y" data-rowspan="1" data-colspan="1"><br></p></td>`,
-          `<td data-row="row-929dk8" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-l0enbj" data-rowspan="1" data-colspan="1"><br></p></td>`,
-          `<td data-row="row-929dk8" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-xa4lb9" data-rowspan="1" data-colspan="1"><br></p></td>`,
+          `<td data-row="row-929dk8" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-lj7h6y" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `<td data-row="row-929dk8" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-l0enbj" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `<td data-row="row-929dk8" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-xa4lb9" data-rowspan="1" data-colspan="1"><br/></p></td>`,
           '</tr>',
           `<tr data-row="row-j95olh">`,
-          `<td data-row="row-j95olh" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-2w5wjp" data-rowspan="1" data-colspan="1"><br></p></td>`,
-          `<td data-row="row-j95olh" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-o7q92h" data-rowspan="1" data-colspan="1"><br></p></td>`,
-          `<td data-row="row-j95olh" rolspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-4nujo2" data-rowspan="1" data-colspan="1"><br></p></td>`,
+          `<td data-row="row-j95olh" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-2w5wjp" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `<td data-row="row-j95olh" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-o7q92h" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `<td data-row="row-j95olh" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-4nujo2" data-rowspan="1" data-colspan="1"><br/></p></td>`,
           '</tr>',
           `</tbody>`,
           `</table>`,
