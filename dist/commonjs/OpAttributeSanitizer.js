@@ -33,6 +33,7 @@ var OpAttributeSanitizer = (function () {
         var colorAttrs = ['background', 'color'];
         var font = dirtyAttrs.font, size = dirtyAttrs.size, link = dirtyAttrs.link, script = dirtyAttrs.script, list = dirtyAttrs.list, header = dirtyAttrs.header, align = dirtyAttrs.align, direction = dirtyAttrs.direction, indent = dirtyAttrs.indent, mentions = dirtyAttrs.mentions, mention = dirtyAttrs.mention, width = dirtyAttrs.width, target = dirtyAttrs.target, rel = dirtyAttrs.rel;
         var codeBlock = dirtyAttrs['code-block'];
+        console.log(dirtyAttrs);
         var sanitizedAttrs = booleanAttrs.concat(colorAttrs, [
             'font',
             'size',
@@ -94,10 +95,11 @@ var OpAttributeSanitizer = (function () {
         if (script === value_types_1.ScriptType.Sub || value_types_1.ScriptType.Super === script) {
             cleanAttrs.script = script;
         }
-        if (list === value_types_1.ListType.Bullet ||
-            list === value_types_1.ListType.Ordered ||
-            list === value_types_1.ListType.Checked ||
-            list === value_types_1.ListType.Unchecked) {
+        if (list &&
+            (list.list === value_types_1.ListType.Bullet ||
+                list.list === value_types_1.ListType.Ordered ||
+                list.list === value_types_1.ListType.Checked ||
+                list.list === value_types_1.ListType.Unchecked)) {
             cleanAttrs.list = list;
         }
         if (Number(header)) {

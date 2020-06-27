@@ -82,24 +82,25 @@ var DeltaInsertOp = (function () {
             this.isUncheckedList());
     };
     DeltaInsertOp.prototype.isOrderedList = function () {
-        return this.attributes.list === value_types_1.ListType.Ordered;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Ordered;
     };
     DeltaInsertOp.prototype.isBulletList = function () {
-        return this.attributes.list === value_types_1.ListType.Bullet;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Bullet;
     };
     DeltaInsertOp.prototype.isCheckedList = function () {
-        return this.attributes.list === value_types_1.ListType.Checked;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Checked;
     };
     DeltaInsertOp.prototype.isUncheckedList = function () {
-        return this.attributes.list === value_types_1.ListType.Unchecked;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Unchecked;
     };
     DeltaInsertOp.prototype.isACheckList = function () {
-        return (this.attributes.list == value_types_1.ListType.Unchecked ||
-            this.attributes.list === value_types_1.ListType.Checked);
+        return (!!this.attributes.list &&
+            (this.attributes.list.list == value_types_1.ListType.Unchecked ||
+                this.attributes.list.list === value_types_1.ListType.Checked));
     };
     DeltaInsertOp.prototype.isSameListAs = function (op) {
         return (!!op.attributes.list &&
-            (this.attributes.list === op.attributes.list ||
+            (this.attributes.list.list === op.attributes.list.list ||
                 (op.isACheckList() && this.isACheckList())));
     };
     DeltaInsertOp.prototype.isSameTableCellAs = function (op) {

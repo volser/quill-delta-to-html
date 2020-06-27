@@ -130,11 +130,11 @@ class QuillDeltaToHtmlConverter {
       groupedSameStyleBlocks
     );
 
-    var tableGrouper = new TableGrouper();
-    groupedOps = tableGrouper.group(groupedOps);
-
     var listNester = new ListNester();
-    return listNester.nest(groupedOps);
+    groupedOps = listNester.nest(groupedOps);
+
+    var tableGrouper = new TableGrouper();
+    return tableGrouper.group(groupedOps);
   }
 
   convert() {

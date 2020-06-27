@@ -16,6 +16,14 @@ interface TableColAttributes {
   width?: string | undefined;
 }
 
+interface ListAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+  list: ListType;
+}
+
 interface IOpAttributes {
   background?: string | undefined;
   color?: string | undefined;
@@ -32,7 +40,7 @@ interface IOpAttributes {
 
   code?: boolean | undefined;
 
-  list?: ListType;
+  list?: ListAttributes;
   blockquote?: boolean | undefined;
   'code-block'?: string | boolean | undefined;
   header?: number | undefined;
@@ -103,6 +111,7 @@ class OpAttributeSanitizer {
       rel,
     } = dirtyAttrs;
     let codeBlock = dirtyAttrs['code-block'];
+    console.log(dirtyAttrs);
 
     let sanitizedAttrs = [
       ...booleanAttrs,
@@ -181,10 +190,11 @@ class OpAttributeSanitizer {
     }
 
     if (
-      list === ListType.Bullet ||
-      list === ListType.Ordered ||
-      list === ListType.Checked ||
-      list === ListType.Unchecked
+      list &&
+      (list!.list === ListType.Bullet ||
+        list!.list === ListType.Ordered ||
+        list!.list === ListType.Checked ||
+        list!.list === ListType.Unchecked)
     ) {
       cleanAttrs.list = list;
     }

@@ -111,32 +111,42 @@ class DeltaInsertOp {
   }
 
   isOrderedList() {
-    return this.attributes.list === ListType.Ordered;
+    return (
+      !!this.attributes.list && this.attributes.list!.list === ListType.Ordered
+    );
   }
 
   isBulletList() {
-    return this.attributes.list === ListType.Bullet;
+    return (
+      !!this.attributes.list && this.attributes.list!.list === ListType.Bullet
+    );
   }
 
   isCheckedList() {
-    return this.attributes.list === ListType.Checked;
+    return (
+      !!this.attributes.list && this.attributes.list!.list === ListType.Checked
+    );
   }
 
   isUncheckedList() {
-    return this.attributes.list === ListType.Unchecked;
+    return (
+      !!this.attributes.list &&
+      this.attributes.list!.list === ListType.Unchecked
+    );
   }
 
   isACheckList() {
     return (
-      this.attributes.list == ListType.Unchecked ||
-      this.attributes.list === ListType.Checked
+      !!this.attributes.list &&
+      (this.attributes.list!.list == ListType.Unchecked ||
+        this.attributes.list!.list === ListType.Checked)
     );
   }
 
   isSameListAs(op: DeltaInsertOp): boolean {
     return (
       !!op.attributes.list &&
-      (this.attributes.list === op.attributes.list ||
+      (this.attributes.list!.list === op.attributes.list!.list ||
         (op.isACheckList() && this.isACheckList()))
     );
   }

@@ -187,10 +187,10 @@ describe('QuillDeltaToHtmlConverter', function () {
       var ops4 = [
         { insert: 'mr\n' },
         { insert: 'hello' },
-        { insert: '\n', attributes: { list: 'ordered' } },
+        { insert: '\n', attributes: { list: { list: 'ordered' } } },
         { insert: 'there' },
-        { insert: '\n', attributes: { list: 'bullet' } },
-        { insert: '\n', attributes: { list: 'ordered' } },
+        { insert: '\n', attributes: { list: { list: 'bullet' } } },
+        { insert: '\n', attributes: { list: { list: 'ordered' } } },
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops4);
       var html = qdc.convert();
@@ -215,13 +215,16 @@ describe('QuillDeltaToHtmlConverter', function () {
     it('should create checked/unchecked lists', function () {
       var ops4 = [
         { insert: 'hello' },
-        { insert: '\n', attributes: { list: 'checked' } },
+        { insert: '\n', attributes: { list: { list: 'checked' } } },
         { insert: 'there' },
-        { insert: '\n', attributes: { list: 'unchecked' } },
+        { insert: '\n', attributes: { list: { list: 'unchecked' } } },
         { insert: 'man' },
-        { insert: '\n', attributes: { list: 'checked' } },
+        { insert: '\n', attributes: { list: { list: 'checked' } } },
         { insert: 'not done' },
-        { insert: '\n', attributes: { indent: 1, list: 'unchecked' } },
+        {
+          insert: '\n',
+          attributes: { indent: 1, list: { list: 'unchecked' } },
+        },
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops4);
       var html = qdc.convert();
@@ -761,17 +764,17 @@ describe('QuillDeltaToHtmlConverter', function () {
 
   describe('_getListTag()', function () {
     it('should return proper list tag', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Ordered });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Ordered } });
       var qdc = new QuillDeltaToHtmlConverter(delta1.ops);
       assert.equal(qdc._getListTag(op), 'ol');
 
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Bullet } });
       assert.equal(qdc._getListTag(op), 'ul');
 
-      var op = new DeltaInsertOp('\n', { list: ListType.Checked });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Checked } });
       assert.equal(qdc._getListTag(op), 'ul');
 
-      var op = new DeltaInsertOp('\n', { list: ListType.Unchecked });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Unchecked } });
       assert.equal(qdc._getListTag(op), 'ul');
 
       var op = new DeltaInsertOp('d');
@@ -1103,9 +1106,9 @@ describe('QuillDeltaToHtmlConverter', function () {
         { insert: '\n', attributes: { blockquote: true } },
         { insert: { video: 'http://' } },
         { insert: 'list item 1' },
-        { insert: '\n', attributes: { list: 'bullet' } },
+        { insert: '\n', attributes: { list: { list: 'bullet' } } },
         { insert: 'list item 1 indented' },
-        { insert: '\n', attributes: { list: 'bullet', indent: 1 } },
+        { insert: '\n', attributes: { list: { list: 'bullet' }, indent: 1 } },
       ];
       var qdc = new QuillDeltaToHtmlConverter(ops);
 

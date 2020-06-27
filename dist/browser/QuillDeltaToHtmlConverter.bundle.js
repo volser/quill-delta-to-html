@@ -83,24 +83,25 @@ var DeltaInsertOp = (function () {
             this.isUncheckedList());
     };
     DeltaInsertOp.prototype.isOrderedList = function () {
-        return this.attributes.list === value_types_1.ListType.Ordered;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Ordered;
     };
     DeltaInsertOp.prototype.isBulletList = function () {
-        return this.attributes.list === value_types_1.ListType.Bullet;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Bullet;
     };
     DeltaInsertOp.prototype.isCheckedList = function () {
-        return this.attributes.list === value_types_1.ListType.Checked;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Checked;
     };
     DeltaInsertOp.prototype.isUncheckedList = function () {
-        return this.attributes.list === value_types_1.ListType.Unchecked;
+        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Unchecked;
     };
     DeltaInsertOp.prototype.isACheckList = function () {
-        return (this.attributes.list == value_types_1.ListType.Unchecked ||
-            this.attributes.list === value_types_1.ListType.Checked);
+        return (!!this.attributes.list &&
+            (this.attributes.list.list == value_types_1.ListType.Unchecked ||
+                this.attributes.list.list === value_types_1.ListType.Checked));
     };
     DeltaInsertOp.prototype.isSameListAs = function (op) {
         return (!!op.attributes.list &&
-            (this.attributes.list === op.attributes.list ||
+            (this.attributes.list.list === op.attributes.list.list ||
                 (op.isACheckList() && this.isACheckList())));
     };
     DeltaInsertOp.prototype.isSameTableCellAs = function (op) {
@@ -295,6 +296,7 @@ var OpAttributeSanitizer = (function () {
         var colorAttrs = ['background', 'color'];
         var font = dirtyAttrs.font, size = dirtyAttrs.size, link = dirtyAttrs.link, script = dirtyAttrs.script, list = dirtyAttrs.list, header = dirtyAttrs.header, align = dirtyAttrs.align, direction = dirtyAttrs.direction, indent = dirtyAttrs.indent, mentions = dirtyAttrs.mentions, mention = dirtyAttrs.mention, width = dirtyAttrs.width, target = dirtyAttrs.target, rel = dirtyAttrs.rel;
         var codeBlock = dirtyAttrs['code-block'];
+        console.log(dirtyAttrs);
         var sanitizedAttrs = booleanAttrs.concat(colorAttrs, [
             'font',
             'size',
@@ -356,10 +358,11 @@ var OpAttributeSanitizer = (function () {
         if (script === value_types_1.ScriptType.Sub || value_types_1.ScriptType.Super === script) {
             cleanAttrs.script = script;
         }
-        if (list === value_types_1.ListType.Bullet ||
-            list === value_types_1.ListType.Ordered ||
-            list === value_types_1.ListType.Checked ||
-            list === value_types_1.ListType.Unchecked) {
+        if (list &&
+            (list.list === value_types_1.ListType.Bullet ||
+                list.list === value_types_1.ListType.Ordered ||
+                list.list === value_types_1.ListType.Checked ||
+                list.list === value_types_1.ListType.Unchecked)) {
             cleanAttrs.list = list;
         }
         if (Number(header)) {
@@ -854,7 +857,6 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype.getGroupedOps = function () {
         var deltaOps = InsertOpsConverter_1.InsertOpsConverter.convert(this.rawDeltaOps, this.options);
         var pairedOps = Grouper_1.Grouper.pairOpsWithTheirBlock(deltaOps);
-        console.log(pairedOps);
         var groupedSameStyleBlocks = Grouper_1.Grouper.groupConsecutiveSameStyleBlocks(pairedOps, {
             blockquotes: !!this.options.multiLineBlockquote,
             header: !!this.options.multiLineHeader,
@@ -862,10 +864,10 @@ var QuillDeltaToHtmlConverter = (function () {
             customBlocks: !!this.options.multiLineCustomBlock,
         });
         var groupedOps = Grouper_1.Grouper.reduceConsecutiveSameStyleBlocksToOne(groupedSameStyleBlocks);
-        var tableGrouper = new TableGrouper_1.TableGrouper();
-        groupedOps = tableGrouper.group(groupedOps);
         var listNester = new ListNester_1.ListNester();
-        return listNester.nest(groupedOps);
+        groupedOps = listNester.nest(groupedOps);
+        var tableGrouper = new TableGrouper_1.TableGrouper();
+        return tableGrouper.group(groupedOps);
     };
     QuillDeltaToHtmlConverter.prototype.convert = function () {
         var _this = this;
@@ -998,8 +1000,8 @@ var QuillDeltaToHtmlConverter = (function () {
             { key: 'class', value: 'qlbt-cell-line' },
             { key: 'data-row', value: line.attrs.row },
             { key: 'data-cell', value: line.attrs.cell },
-            { key: 'rowspan', value: line.attrs.rowspan },
-            { key: 'colspan', value: line.attrs.colspan },
+            { key: 'data-rowspan', value: line.attrs.rowspan },
+            { key: 'data-colspan', value: line.attrs.colspan },
         ]) +
             parts.openingTag +
             cellElementsHtml +

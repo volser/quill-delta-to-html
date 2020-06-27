@@ -78,7 +78,6 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype.getGroupedOps = function () {
         var deltaOps = InsertOpsConverter_1.InsertOpsConverter.convert(this.rawDeltaOps, this.options);
         var pairedOps = Grouper_1.Grouper.pairOpsWithTheirBlock(deltaOps);
-        console.log(pairedOps);
         var groupedSameStyleBlocks = Grouper_1.Grouper.groupConsecutiveSameStyleBlocks(pairedOps, {
             blockquotes: !!this.options.multiLineBlockquote,
             header: !!this.options.multiLineHeader,
@@ -86,10 +85,10 @@ var QuillDeltaToHtmlConverter = (function () {
             customBlocks: !!this.options.multiLineCustomBlock,
         });
         var groupedOps = Grouper_1.Grouper.reduceConsecutiveSameStyleBlocksToOne(groupedSameStyleBlocks);
-        var tableGrouper = new TableGrouper_1.TableGrouper();
-        groupedOps = tableGrouper.group(groupedOps);
         var listNester = new ListNester_1.ListNester();
-        return listNester.nest(groupedOps);
+        groupedOps = listNester.nest(groupedOps);
+        var tableGrouper = new TableGrouper_1.TableGrouper();
+        return tableGrouper.group(groupedOps);
     };
     QuillDeltaToHtmlConverter.prototype.convert = function () {
         var _this = this;
@@ -222,8 +221,8 @@ var QuillDeltaToHtmlConverter = (function () {
             { key: 'class', value: 'qlbt-cell-line' },
             { key: 'data-row', value: line.attrs.row },
             { key: 'data-cell', value: line.attrs.cell },
-            { key: 'rowspan', value: line.attrs.rowspan },
-            { key: 'colspan', value: line.attrs.colspan },
+            { key: 'data-rowspan', value: line.attrs.rowspan },
+            { key: 'data-colspan', value: line.attrs.colspan },
         ]) +
             parts.openingTag +
             cellElementsHtml +

@@ -9,6 +9,13 @@ interface TableCellLineAttributes {
 interface TableColAttributes {
   width?: string | undefined;
 }
+interface ListAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+  list: ListType;
+}
 interface IOpAttributes {
   background?: string | undefined;
   color?: string | undefined;
@@ -22,7 +29,7 @@ interface IOpAttributes {
   strike?: boolean | undefined;
   script?: ScriptType;
   code?: boolean | undefined;
-  list?: ListType;
+  list?: ListAttributes;
   blockquote?: boolean | undefined;
   'code-block'?: string | boolean | undefined;
   header?: number | undefined;
