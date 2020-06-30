@@ -703,6 +703,224 @@ describe('QuillDeltaToHtmlConverter', function () {
         ].join('')
       );
     });
+
+    it('should render filled cu-table', () => {
+      let ops = [
+        {
+          attributes: {
+            'table-col': { width: '150' },
+          },
+          insert: '\n\n',
+        },
+        {
+          attributes: {
+            'table-col': { width: '200' },
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-1-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-dvagmt',
+              cell: 'cell-383p7o',
+            },
+            row: 'row-dvagmt',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-1-line-2',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-dvagmt',
+              cell: 'cell-383p7o',
+            },
+            row: 'row-dvagmt',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-2-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-dvagmt',
+              cell: 'cell-kdrmch',
+            },
+            row: 'row-dvagmt',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-3-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-dvagmt',
+              cell: 'cell-ljjq9j',
+            },
+            row: 'row-dvagmt',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-4-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-929dk8',
+              cell: 'cell-lj7h6y',
+            },
+            row: 'row-929dk8',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-5-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-929dk8',
+              cell: 'cell-l0enbj',
+            },
+            row: 'row-929dk8',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-6-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-929dk8',
+              cell: 'cell-xa4lb9',
+            },
+            row: 'row-929dk8',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-7-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-j95olh',
+              cell: 'cell-2w5wjp',
+            },
+            row: 'row-j95olh',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-8-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-j95olh',
+              cell: 'cell-o7q92h',
+            },
+            row: 'row-j95olh',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+        {
+          insert: 'cell-9-line-1',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-j95olh',
+              cell: 'cell-4nujo2',
+            },
+            row: 'row-j95olh',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+      ];
+
+      let qdc = new QuillDeltaToHtmlConverter(ops);
+      assert.equal(
+        qdc.convert(),
+        [
+          `<div class="clickup-table-view">`,
+          `<table class="clickup-table" style="width: 500px">`,
+          `<colgroup>`,
+          `<col width="150"><col width="150"><col width="200">`,
+          `</colgroup>`,
+          `<tbody>`,
+          `<tr data-row="row-dvagmt">`,
+          `<td data-row="row-dvagmt" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-383p7o" data-rowspan="1" data-colspan="1">cell-1-line-1</p><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-383p7o" data-rowspan="1" data-colspan="1">cell-1-line-2</p></td>`,
+          `<td data-row="row-dvagmt" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-kdrmch" data-rowspan="1" data-colspan="1">cell-2-line-1</p></td>`,
+          `<td data-row="row-dvagmt" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-dvagmt" data-cell="cell-ljjq9j" data-rowspan="1" data-colspan="1">cell-3-line-1</p></td>`,
+          '</tr>',
+          `<tr data-row="row-929dk8">`,
+          `<td data-row="row-929dk8" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-lj7h6y" data-rowspan="1" data-colspan="1">cell-4-line-1</p></td>`,
+          `<td data-row="row-929dk8" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-l0enbj" data-rowspan="1" data-colspan="1">cell-5-line-1</p></td>`,
+          `<td data-row="row-929dk8" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-929dk8" data-cell="cell-xa4lb9" data-rowspan="1" data-colspan="1">cell-6-line-1</p></td>`,
+          '</tr>',
+          `<tr data-row="row-j95olh">`,
+          `<td data-row="row-j95olh" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-2w5wjp" data-rowspan="1" data-colspan="1">cell-7-line-1</p></td>`,
+          `<td data-row="row-j95olh" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-o7q92h" data-rowspan="1" data-colspan="1">cell-8-line-1</p></td>`,
+          `<td data-row="row-j95olh" rowspan="1" colspan="1"><p class="qlbt-cell-line" data-row="row-j95olh" data-cell="cell-4nujo2" data-rowspan="1" data-colspan="1">cell-9-line-1</p></td>`,
+          '</tr>',
+          `</tbody>`,
+          `</table>`,
+          `</div>`,
+        ].join('')
+      );
+    });
   });
 
   describe('custom types', () => {
