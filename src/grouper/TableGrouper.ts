@@ -7,9 +7,11 @@ import {
   TableRow,
   TableCell,
   TableCellLine,
+  ListGroup,
 } from './group-types';
 import { groupConsecutiveElementsWhile } from '../helpers/array';
 import { isArray } from 'util';
+import { IOpAttributes } from '../OpAttributeSanitizer';
 
 export class TableGrouper {
   group(groups: TDataGroup[]): TDataGroup[] {
@@ -25,10 +27,24 @@ export class TableGrouper {
       items,
       (g: TDataGroup, gPrev: TDataGroup) => {
         return (
-          g instanceof BlockGroup &&
-          gPrev instanceof BlockGroup &&
-          g.op.isTableCellLine() &&
-          gPrev.op.isTableCellLine()
+          (g instanceof BlockGroup &&
+            gPrev instanceof BlockGroup &&
+            g.op.isTableCellLine() &&
+            gPrev.op.isTableCellLine()) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof BlockGroup &&
+            g.headOp!.attributes!.cell &&
+            gPrev.op.isTableCellLine()) ||
+          (g instanceof BlockGroup &&
+            gPrev instanceof ListGroup &&
+            g.op.isTableCellLine() &&
+            gPrev.headOp!.attributes!.cell) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof ListGroup &&
+            !!g.headOp &&
+            !!gPrev.headOp &&
+            g.headOp!.attributes!.cell &&
+            gPrev.headOp!.attributes!.cell)
         );
       }
     );
@@ -117,24 +133,56 @@ export class TableGrouper {
       items,
       (g: TDataGroup, gPrev: TDataGroup) => {
         return (
-          g instanceof BlockGroup &&
-          gPrev instanceof BlockGroup &&
-          g.op.isTableCellLine() &&
-          gPrev.op.isTableCellLine() &&
-          g.op.isSameTableCellAs(gPrev.op)
+          (g instanceof BlockGroup &&
+            gPrev instanceof BlockGroup &&
+            g.op.isTableCellLine() &&
+            gPrev.op.isTableCellLine() &&
+            g.op.isSameTableCellAs(gPrev.op)) ||
+          (g instanceof BlockGroup &&
+            gPrev instanceof ListGroup &&
+            g.op.isTableCellLine() &&
+            !!gPrev.headOp &&
+            g.op.isSameTableCellAs(gPrev.headOp)) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof BlockGroup &&
+            gPrev.op.isTableCellLine() &&
+            !!g.headOp &&
+            g.headOp.isSameTableCellAs(gPrev.op)) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof ListGroup &&
+            !!g.headOp &&
+            !!gPrev.headOp &&
+            g.headOp.isSameTableCellAs(gPrev.headOp))
         );
       }
     );
 
-    return grouped.map((item: BlockGroup | BlockGroup[]) => {
-      const attrs = isArray(item) ? item[0].op.attributes : item.op.attributes;
-      return new TableCell(
-        Array.isArray(item)
-          ? item.map((it) => new TableCellLine(it))
-          : [new TableCellLine(item)],
-        attrs
-      );
-    });
+    return grouped.map(
+      (item: (BlockGroup | ListGroup) | (BlockGroup | ListGroup)[]) => {
+        const head = isArray(item) ? item[0] : item;
+        let attrs: IOpAttributes;
+        if (head instanceof BlockGroup) {
+          attrs = head.op.attributes;
+        } else {
+          attrs = head.headOp!.attributes;
+        }
+
+        let children: (TableCellLine | ListGroup)[];
+        if (isArray(item)) {
+          children = item.map((it) => {
+            return it instanceof BlockGroup ? new TableCellLine(it) : it;
+          });
+        } else {
+          if (item instanceof BlockGroup) {
+            children = [new TableCellLine(item)];
+          } else {
+            children = [item];
+          }
+        }
+
+        return new TableCell(children, attrs);
+      }
+    );
   }
 
   private convertTableColBlocksToTableColGroup(

@@ -17,6 +17,7 @@ declare class BlockGroup {
 }
 declare class ListGroup {
   items: ListItem[];
+  readonly headOp: DeltaInsertOp | undefined;
   constructor(items: ListItem[]);
 }
 declare class ListItem {
@@ -43,9 +44,9 @@ declare class TableRow {
   constructor(cells: TableCell[], row: string | undefined);
 }
 declare class TableCell {
-  lines: TableCellLine[];
+  lines: (TableCellLine | ListGroup)[];
   readonly attrs: IOpAttributes | undefined;
-  constructor(lines: TableCellLine[], attributes: IOpAttributes);
+  constructor(lines: (TableCellLine | ListGroup)[], attributes: IOpAttributes);
 }
 declare class TableCellLine {
   readonly item: BlockGroup;

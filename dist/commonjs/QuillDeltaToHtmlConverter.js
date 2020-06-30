@@ -149,12 +149,35 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype._renderList = function (list) {
         var _this = this;
         var firstItem = list.items[0];
-        return (funcs_html_1.makeStartTag(this._getListTag(firstItem.item.op)) +
+        var attrsOfList = !!list.headOp
+            ? [
+                { key: 'data-row', value: list.headOp.attributes.row },
+                { key: 'data-cell', value: list.headOp.attributes.cell },
+                { key: 'data-rowspan', value: list.headOp.attributes.rowspan },
+                { key: 'data-colspan', value: list.headOp.attributes.colspan },
+                { key: 'data-list', value: list.headOp.attributes.list.list }
+            ]
+            : [];
+        return (funcs_html_1.makeStartTag(this._getListTag(firstItem.item.op), attrsOfList) +
             list.items.map(function (li) { return _this._renderListItem(li); }).join('') +
             funcs_html_1.makeEndTag(this._getListTag(firstItem.item.op)));
     };
     QuillDeltaToHtmlConverter.prototype._renderListItem = function (li) {
         li.item.op.attributes.indent = 0;
+        if (li.item.op.attributes.cell) {
+            var userCustomTagAttrs_1 = this.converterOptions.customTagAttributes;
+            this.converterOptions.customTagAttributes = function (param) {
+                var userAttrs = typeof userCustomTagAttrs_1 === 'function'
+                    ? userCustomTagAttrs_1(param)
+                    : {};
+                return Object.assign({}, userAttrs, {
+                    'data-row': li.item.op.attributes.row,
+                    'data-cell': li.item.op.attributes.cell,
+                    'data-rowspan': li.item.op.attributes.rowspan,
+                    'data-colspan': li.item.op.attributes.colspan
+                });
+            };
+        }
         var converter = new OpToHtmlConverter_1.OpToHtmlConverter(li.item.op, this.converterOptions);
         var parts = converter.getHtmlParts();
         var liElementsHtml = this._renderInlines(li.item.ops, false);
@@ -209,7 +232,11 @@ var QuillDeltaToHtmlConverter = (function () {
             { key: 'colspan', value: cell.attrs.colspan },
         ]) +
             cell.lines
-                .map(function (line) { return _this._renderTableCellLine(line); })
+                .map(function (item) {
+                return item instanceof group_types_1.TableCellLine
+                    ? _this._renderTableCellLine(item)
+                    : _this._renderList(item);
+            })
                 .join('') +
             funcs_html_1.makeEndTag('td'));
     };

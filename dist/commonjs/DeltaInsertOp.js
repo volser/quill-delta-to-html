@@ -82,16 +82,17 @@ var DeltaInsertOp = (function () {
             this.isUncheckedList());
     };
     DeltaInsertOp.prototype.isOrderedList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Ordered;
+        return (!!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Ordered);
     };
     DeltaInsertOp.prototype.isBulletList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Bullet;
+        return (!!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Bullet);
     };
     DeltaInsertOp.prototype.isCheckedList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Checked;
+        return (!!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Checked);
     };
     DeltaInsertOp.prototype.isUncheckedList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Unchecked;
+        return (!!this.attributes.list &&
+            this.attributes.list.list === value_types_1.ListType.Unchecked);
     };
     DeltaInsertOp.prototype.isACheckList = function () {
         return (!!this.attributes.list &&
@@ -109,7 +110,19 @@ var DeltaInsertOp = (function () {
             !!this.attributes['table-cell-line'] &&
             !!op.attributes['table-cell-line'] &&
             this.attributes['table-cell-line'].cell ===
-                op.attributes['table-cell-line'].cell);
+                op.attributes['table-cell-line'].cell) || (op.isList() &&
+            this.isTableCellLine() &&
+            !!this.attributes['table-cell-line'] &&
+            !!op.attributes['list'] &&
+            this.attributes['table-cell-line'].cell === op.attributes['list'].cell) || (op.isTableCellLine() &&
+            this.isList() &&
+            !!op.attributes['table-cell-line'] &&
+            !!this.attributes['list'] &&
+            op.attributes['table-cell-line'].cell === this.attributes['list'].cell) || (op.isList() &&
+            this.isList() &&
+            !!this.attributes['list'] &&
+            !!op.attributes['list'] &&
+            this.attributes['list'].cell === op.attributes['list'].cell);
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;

@@ -28,8 +28,18 @@ class BlockGroup {
 
 class ListGroup {
   items: ListItem[];
+  readonly headOp: DeltaInsertOp | undefined;
   constructor(items: ListItem[]) {
     this.items = items;
+
+    const headListItem = items[0];
+    if (
+      headListItem &&
+      headListItem.item.op.attributes &&
+      headListItem.item.op.attributes.cell
+    ) {
+      this.headOp = headListItem.item.op;
+    }
   }
 }
 
@@ -75,9 +85,9 @@ class TableRow {
 }
 
 class TableCell {
-  lines: TableCellLine[];
+  lines: (TableCellLine | ListGroup)[];
   readonly attrs: IOpAttributes | undefined;
-  constructor(lines: TableCellLine[], attributes: IOpAttributes) {
+  constructor(lines: (TableCellLine | ListGroup)[], attributes: IOpAttributes) {
     this.lines = lines;
     this.attrs = attributes;
   }

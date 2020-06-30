@@ -201,8 +201,17 @@ class QuillDeltaToHtmlConverter {
 
   _renderList(list: ListGroup): string {
     var firstItem = list.items[0];
+    const attrsOfList = !!list.headOp
+      ? [
+          { key: 'data-row', value: list.headOp.attributes!.row },
+          { key: 'data-cell', value: list.headOp.attributes!.cell },
+          { key: 'data-rowspan', value: list.headOp.attributes!.rowspan },
+          { key: 'data-colspan', value: list.headOp.attributes!.colspan },
+          { key: 'data-list', value: list.headOp.attributes!.list!.list },
+        ]
+      : [];
     return (
-      makeStartTag(this._getListTag(firstItem.item.op)) +
+      makeStartTag(this._getListTag(firstItem.item.op), attrsOfList) +
       list.items.map((li: ListItem) => this._renderListItem(li)).join('') +
       makeEndTag(this._getListTag(firstItem.item.op))
     );
@@ -212,9 +221,28 @@ class QuillDeltaToHtmlConverter {
     //if (!isOuterMost) {
     li.item.op.attributes.indent = 0;
     //}
+    // if (list in table cell)
+    if (li.item.op.attributes.cell) {
+      const userCustomTagAttrs = this.converterOptions.customTagAttributes;
+      this.converterOptions.customTagAttributes = (param) => {
+        const userAttrs =
+          typeof userCustomTagAttrs === 'function'
+            ? userCustomTagAttrs(param)
+            : {};
+
+        return Object.assign({}, userAttrs, {
+          'data-row': li.item.op.attributes.row,
+          'data-cell': li.item.op.attributes.cell,
+          'data-rowspan': li.item.op.attributes.rowspan,
+          'data-colspan': li.item.op.attributes.colspan,
+        });
+      };
+    }
+
     var converter = new OpToHtmlConverter(li.item.op, this.converterOptions);
     var parts = converter.getHtmlParts();
     var liElementsHtml = this._renderInlines(li.item.ops, false);
+
     return (
       parts.openingTag +
       liElementsHtml +
@@ -282,7 +310,11 @@ class QuillDeltaToHtmlConverter {
         { key: 'colspan', value: cell.attrs!.colspan },
       ]) +
       cell.lines
-        .map((line: TableCellLine) => this._renderTableCellLine(line))
+        .map((item: TableCellLine | ListGroup) => {
+          return item instanceof TableCellLine
+            ? this._renderTableCellLine(item)
+            : this._renderList(item);
+        })
         .join('') +
       makeEndTag('td')
     );

@@ -111,7 +111,6 @@ class OpAttributeSanitizer {
       rel,
     } = dirtyAttrs;
     let codeBlock = dirtyAttrs['code-block'];
-    console.log(dirtyAttrs);
 
     let sanitizedAttrs = [
       ...booleanAttrs,

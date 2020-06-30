@@ -83,16 +83,17 @@ var DeltaInsertOp = (function () {
             this.isUncheckedList());
     };
     DeltaInsertOp.prototype.isOrderedList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Ordered;
+        return (!!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Ordered);
     };
     DeltaInsertOp.prototype.isBulletList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Bullet;
+        return (!!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Bullet);
     };
     DeltaInsertOp.prototype.isCheckedList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Checked;
+        return (!!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Checked);
     };
     DeltaInsertOp.prototype.isUncheckedList = function () {
-        return !!this.attributes.list && this.attributes.list.list === value_types_1.ListType.Unchecked;
+        return (!!this.attributes.list &&
+            this.attributes.list.list === value_types_1.ListType.Unchecked);
     };
     DeltaInsertOp.prototype.isACheckList = function () {
         return (!!this.attributes.list &&
@@ -110,7 +111,19 @@ var DeltaInsertOp = (function () {
             !!this.attributes['table-cell-line'] &&
             !!op.attributes['table-cell-line'] &&
             this.attributes['table-cell-line'].cell ===
-                op.attributes['table-cell-line'].cell);
+                op.attributes['table-cell-line'].cell) || (op.isList() &&
+            this.isTableCellLine() &&
+            !!this.attributes['table-cell-line'] &&
+            !!op.attributes['list'] &&
+            this.attributes['table-cell-line'].cell === op.attributes['list'].cell) || (op.isTableCellLine() &&
+            this.isList() &&
+            !!op.attributes['table-cell-line'] &&
+            !!this.attributes['list'] &&
+            op.attributes['table-cell-line'].cell === this.attributes['list'].cell) || (op.isList() &&
+            this.isList() &&
+            !!this.attributes['list'] &&
+            !!op.attributes['list'] &&
+            this.attributes['list'].cell === op.attributes['list'].cell);
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;
@@ -296,7 +309,6 @@ var OpAttributeSanitizer = (function () {
         var colorAttrs = ['background', 'color'];
         var font = dirtyAttrs.font, size = dirtyAttrs.size, link = dirtyAttrs.link, script = dirtyAttrs.script, list = dirtyAttrs.list, header = dirtyAttrs.header, align = dirtyAttrs.align, direction = dirtyAttrs.direction, indent = dirtyAttrs.indent, mentions = dirtyAttrs.mentions, mention = dirtyAttrs.mention, width = dirtyAttrs.width, target = dirtyAttrs.target, rel = dirtyAttrs.rel;
         var codeBlock = dirtyAttrs['code-block'];
-        console.log(dirtyAttrs);
         var sanitizedAttrs = booleanAttrs.concat(colorAttrs, [
             'font',
             'size',
@@ -928,12 +940,35 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype._renderList = function (list) {
         var _this = this;
         var firstItem = list.items[0];
-        return (funcs_html_1.makeStartTag(this._getListTag(firstItem.item.op)) +
+        var attrsOfList = !!list.headOp
+            ? [
+                { key: 'data-row', value: list.headOp.attributes.row },
+                { key: 'data-cell', value: list.headOp.attributes.cell },
+                { key: 'data-rowspan', value: list.headOp.attributes.rowspan },
+                { key: 'data-colspan', value: list.headOp.attributes.colspan },
+                { key: 'data-list', value: list.headOp.attributes.list.list }
+            ]
+            : [];
+        return (funcs_html_1.makeStartTag(this._getListTag(firstItem.item.op), attrsOfList) +
             list.items.map(function (li) { return _this._renderListItem(li); }).join('') +
             funcs_html_1.makeEndTag(this._getListTag(firstItem.item.op)));
     };
     QuillDeltaToHtmlConverter.prototype._renderListItem = function (li) {
         li.item.op.attributes.indent = 0;
+        if (li.item.op.attributes.cell) {
+            var userCustomTagAttrs_1 = this.converterOptions.customTagAttributes;
+            this.converterOptions.customTagAttributes = function (param) {
+                var userAttrs = typeof userCustomTagAttrs_1 === 'function'
+                    ? userCustomTagAttrs_1(param)
+                    : {};
+                return Object.assign({}, userAttrs, {
+                    'data-row': li.item.op.attributes.row,
+                    'data-cell': li.item.op.attributes.cell,
+                    'data-rowspan': li.item.op.attributes.rowspan,
+                    'data-colspan': li.item.op.attributes.colspan
+                });
+            };
+        }
         var converter = new OpToHtmlConverter_1.OpToHtmlConverter(li.item.op, this.converterOptions);
         var parts = converter.getHtmlParts();
         var liElementsHtml = this._renderInlines(li.item.ops, false);
@@ -988,7 +1023,11 @@ var QuillDeltaToHtmlConverter = (function () {
             { key: 'colspan', value: cell.attrs.colspan },
         ]) +
             cell.lines
-                .map(function (line) { return _this._renderTableCellLine(line); })
+                .map(function (item) {
+                return item instanceof group_types_1.TableCellLine
+                    ? _this._renderTableCellLine(item)
+                    : _this._renderList(item);
+            })
                 .join('') +
             funcs_html_1.makeEndTag('td'));
     };
@@ -1396,7 +1435,18 @@ var TableGrouper = (function () {
             return (g instanceof group_types_1.BlockGroup &&
                 gPrev instanceof group_types_1.BlockGroup &&
                 g.op.isTableCellLine() &&
-                gPrev.op.isTableCellLine());
+                gPrev.op.isTableCellLine()) || (g instanceof group_types_1.ListGroup &&
+                gPrev instanceof group_types_1.BlockGroup &&
+                g.headOp.attributes.cell &&
+                gPrev.op.isTableCellLine()) || (g instanceof group_types_1.BlockGroup &&
+                gPrev instanceof group_types_1.ListGroup &&
+                g.op.isTableCellLine() &&
+                gPrev.headOp.attributes.cell) || (g instanceof group_types_1.ListGroup &&
+                gPrev instanceof group_types_1.ListGroup &&
+                !!g.headOp &&
+                !!gPrev.headOp &&
+                g.headOp.attributes.cell &&
+                gPrev.headOp.attributes.cell);
         });
         var tableColGroup;
         return grouped.reduce(function (result, item) {
@@ -1452,13 +1502,46 @@ var TableGrouper = (function () {
                 gPrev instanceof group_types_1.BlockGroup &&
                 g.op.isTableCellLine() &&
                 gPrev.op.isTableCellLine() &&
-                g.op.isSameTableCellAs(gPrev.op));
+                g.op.isSameTableCellAs(gPrev.op)) || (g instanceof group_types_1.BlockGroup &&
+                gPrev instanceof group_types_1.ListGroup &&
+                g.op.isTableCellLine() &&
+                !!gPrev.headOp &&
+                g.op.isSameTableCellAs(gPrev.headOp)) || (g instanceof group_types_1.ListGroup &&
+                gPrev instanceof group_types_1.BlockGroup &&
+                gPrev.op.isTableCellLine() &&
+                !!g.headOp &&
+                g.headOp.isSameTableCellAs(gPrev.op)) || (g instanceof group_types_1.ListGroup &&
+                gPrev instanceof group_types_1.ListGroup &&
+                !!g.headOp &&
+                !!gPrev.headOp &&
+                g.headOp.isSameTableCellAs(gPrev.headOp));
         });
         return grouped.map(function (item) {
-            var attrs = util_1.isArray(item) ? item[0].op.attributes : item.op.attributes;
-            return new group_types_1.TableCell(Array.isArray(item)
-                ? item.map(function (it) { return new group_types_1.TableCellLine(it); })
-                : [new group_types_1.TableCellLine(item)], attrs);
+            var head = util_1.isArray(item) ? item[0] : item;
+            var attrs;
+            if (head instanceof group_types_1.BlockGroup) {
+                attrs = head.op.attributes;
+            }
+            else {
+                attrs = head.headOp.attributes;
+            }
+            var children;
+            if (util_1.isArray(item)) {
+                children = item.map(function (it) {
+                    return it instanceof group_types_1.BlockGroup
+                        ? new group_types_1.TableCellLine(it)
+                        : it;
+                });
+            }
+            else {
+                if (item instanceof group_types_1.BlockGroup) {
+                    children = [new group_types_1.TableCellLine(item)];
+                }
+                else {
+                    children = [item];
+                }
+            }
+            return new group_types_1.TableCell(children, attrs);
         });
     };
     TableGrouper.prototype.convertTableColBlocksToTableColGroup = function (items) {
@@ -1537,6 +1620,12 @@ exports.BlockGroup = BlockGroup;
 var ListGroup = (function () {
     function ListGroup(items) {
         this.items = items;
+        var headListItem = items[0];
+        if (headListItem &&
+            headListItem.item.op.attributes &&
+            headListItem.item.op.attributes.cell) {
+            this.headOp = headListItem.item.op;
+        }
     }
     return ListGroup;
 }());

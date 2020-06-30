@@ -50,6 +50,12 @@ exports.BlockGroup = BlockGroup;
 var ListGroup = (function () {
     function ListGroup(items) {
         this.items = items;
+        var headListItem = items[0];
+        if (headListItem &&
+            headListItem.item.op.attributes &&
+            headListItem.item.op.attributes.cell) {
+            this.headOp = headListItem.item.op;
+        }
     }
     return ListGroup;
 }());
