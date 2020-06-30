@@ -105,24 +105,29 @@ var DeltaInsertOp = (function () {
                 (op.isACheckList() && this.isACheckList())));
     };
     DeltaInsertOp.prototype.isSameTableCellAs = function (op) {
-        return (!!op.isTableCellLine() &&
+        return ((!!op.isTableCellLine() &&
             this.isTableCellLine() &&
             !!this.attributes['table-cell-line'] &&
             !!op.attributes['table-cell-line'] &&
             this.attributes['table-cell-line'].cell ===
-                op.attributes['table-cell-line'].cell) || (op.isList() &&
-            this.isTableCellLine() &&
-            !!this.attributes['table-cell-line'] &&
-            !!op.attributes['list'] &&
-            this.attributes['table-cell-line'].cell === op.attributes['list'].cell) || (op.isTableCellLine() &&
-            this.isList() &&
-            !!op.attributes['table-cell-line'] &&
-            !!this.attributes['list'] &&
-            op.attributes['table-cell-line'].cell === this.attributes['list'].cell) || (op.isList() &&
-            this.isList() &&
-            !!this.attributes['list'] &&
-            !!op.attributes['list'] &&
-            this.attributes['list'].cell === op.attributes['list'].cell);
+                op.attributes['table-cell-line'].cell) ||
+            (op.isList() &&
+                this.isTableCellLine() &&
+                !!this.attributes['table-cell-line'] &&
+                !!op.attributes['list'] &&
+                this.attributes['table-cell-line'].cell ===
+                    op.attributes['list'].cell) ||
+            (op.isTableCellLine() &&
+                this.isList() &&
+                !!op.attributes['table-cell-line'] &&
+                !!this.attributes['list'] &&
+                op.attributes['table-cell-line'].cell ===
+                    this.attributes['list'].cell) ||
+            (op.isList() &&
+                this.isList() &&
+                !!this.attributes['list'] &&
+                !!op.attributes['list'] &&
+                this.attributes['list'].cell === op.attributes['list'].cell));
     };
     DeltaInsertOp.prototype.isText = function () {
         return this.insert.type === value_types_1.DataType.Text;

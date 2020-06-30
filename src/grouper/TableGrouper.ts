@@ -12,6 +12,7 @@ import {
 import { groupConsecutiveElementsWhile } from '../helpers/array';
 import { isArray } from 'util';
 import { IOpAttributes } from '../OpAttributeSanitizer';
+import { DeltaInsertOp } from '../DeltaInsertOp';
 
 export class TableGrouper {
   group(groups: TDataGroup[]): TDataGroup[] {
@@ -67,7 +68,17 @@ export class TableGrouper {
                     item.op.attributes.row
                   ),
                 ],
-                new TableColGroup([new TableCol(item)])
+                tableColGroup ||
+                  new TableColGroup([
+                    new TableCol(
+                      new BlockGroup(
+                        new DeltaInsertOp('\n', {
+                          'table-col': { width: '150' },
+                        }),
+                        []
+                      )
+                    ),
+                  ])
               )
             );
           } else if (item instanceof TableColGroup) {

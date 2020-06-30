@@ -155,7 +155,7 @@ var QuillDeltaToHtmlConverter = (function () {
                 { key: 'data-cell', value: list.headOp.attributes.cell },
                 { key: 'data-rowspan', value: list.headOp.attributes.rowspan },
                 { key: 'data-colspan', value: list.headOp.attributes.colspan },
-                { key: 'data-list', value: list.headOp.attributes.list.list }
+                { key: 'data-list', value: list.headOp.attributes.list.list },
             ]
             : [];
         return (funcs_html_1.makeStartTag(this._getListTag(firstItem.item.op), attrsOfList) +
@@ -174,7 +174,7 @@ var QuillDeltaToHtmlConverter = (function () {
                     'data-row': li.item.op.attributes.row,
                     'data-cell': li.item.op.attributes.cell,
                     'data-rowspan': li.item.op.attributes.rowspan,
-                    'data-colspan': li.item.op.attributes.colspan
+                    'data-colspan': li.item.op.attributes.colspan,
                 });
             };
         }

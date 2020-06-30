@@ -658,6 +658,51 @@ describe('QuillDeltaToHtmlConverter', function () {
         ].join('')
       );
     });
+
+    it('should render single cell cu-table', () => {
+      let ops = [
+        {
+          attributes: {
+            'table-col': { width: '150' },
+          },
+          insert: '\n',
+        },
+        {
+          attributes: {
+            'table-cell-line': {
+              rowspan: '1',
+              colspan: '1',
+              row: 'row-rcydzq',
+              cell: 'cell-fqmunc',
+            },
+            row: 'row-rcydzq',
+            rowspan: '1',
+            colspan: '1',
+          },
+          insert: '\n',
+        },
+      ];
+
+      let qdc = new QuillDeltaToHtmlConverter(ops);
+      assert.equal(
+        qdc.convert(),
+        [
+          `<div class="clickup-table-view">`,
+          `<table class="clickup-table" style="width: 150px">`,
+          `<colgroup>`,
+          `<col width="150">`,
+          `</colgroup>`,
+          `<tbody>`,
+          `<tr data-row="row-rcydzq">`,
+          `<td data-row="row-rcydzq" rowspan="1" colspan="1">`,
+          `<p class="qlbt-cell-line" data-row="row-rcydzq" data-cell="cell-fqmunc" data-rowspan="1" data-colspan="1"><br/></p></td>`,
+          `</tr>`,
+          `</tbody>`,
+          `</table>`,
+          `</div>`,
+        ].join('')
+      );
+    });
   });
 
   describe('custom types', () => {
