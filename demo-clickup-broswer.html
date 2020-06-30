@@ -17,7 +17,7 @@
     // with new list
     var delta1 = {"ops":[{"insert":"sdflk"},{"attributes":{"bold":true},"insert":"sjflk"},{"insert":"jssfsdfsf\nsdfsdfsdf\nsdfsdfsdfsdfsdf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfdsfdsf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfsdf"},{"attributes":{"list":{"list":"ordered"}},"insert":"\n"},{"insert":"sdfsdfsf\nsdfsd\nfsdfsdsdffsdfsdf\nsdfsf\n"},{"attributes":{"link":"www.baidu.com"},"insert":"www.baidu.com"},{"insert":"\n"}]}
 
-    var qdc = new window.QuillDeltaToHtmlConverter(delta2, window.opts_ || {});
+    var qdc = new window.QuillDeltaToHtmlConverter(delta, window.opts_ || {});
     var html = qdc.convert();
     console.log(html);
     document.getElementById('converted-view').innerHTML = html;
