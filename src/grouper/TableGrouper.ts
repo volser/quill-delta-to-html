@@ -81,6 +81,28 @@ export class TableGrouper {
                   ])
               )
             );
+          } else if (item instanceof ListGroup && !!item.headOp) {
+            result.push(
+              new TableGroup(
+                [
+                  new TableRow(
+                    [new TableCell([item], item.headOp.attributes)],
+                    item.headOp.attributes.row
+                  ),
+                ],
+                tableColGroup ||
+                  new TableColGroup([
+                    new TableCol(
+                      new BlockGroup(
+                        new DeltaInsertOp('\n', {
+                          'table-col': { width: '150' },
+                        }),
+                        []
+                      )
+                    ),
+                  ])
+              )
+            );
           } else if (item instanceof TableColGroup) {
             tableColGroup = item;
           } else {
