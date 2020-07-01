@@ -1466,7 +1466,21 @@ var TableGrouper = (function () {
                             new group_types_1.TableCell([new group_types_1.TableCellLine(item)], item.op.attributes),
                         ], item.op.attributes.row),
                     ], tableColGroup ||
-                        new group_types_1.TableColGroup([new group_types_1.TableCol(new group_types_1.BlockGroup(new DeltaInsertOp_1.DeltaInsertOp('\n', { 'table-col': { width: '150' } }), []))])));
+                        new group_types_1.TableColGroup([
+                            new group_types_1.TableCol(new group_types_1.BlockGroup(new DeltaInsertOp_1.DeltaInsertOp('\n', {
+                                'table-col': { width: '150' },
+                            }), [])),
+                        ])));
+                }
+                else if (item instanceof group_types_1.ListGroup && !!item.headOp) {
+                    result.push(new group_types_1.TableGroup([
+                        new group_types_1.TableRow([new group_types_1.TableCell([item], item.headOp.attributes)], item.headOp.attributes.row),
+                    ], tableColGroup ||
+                        new group_types_1.TableColGroup([
+                            new group_types_1.TableCol(new group_types_1.BlockGroup(new DeltaInsertOp_1.DeltaInsertOp('\n', {
+                                'table-col': { width: '150' },
+                            }), [])),
+                        ])));
                 }
                 else if (item instanceof group_types_1.TableColGroup) {
                     tableColGroup = item;
