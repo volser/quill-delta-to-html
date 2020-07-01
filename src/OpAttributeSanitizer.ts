@@ -5,6 +5,25 @@ import { encodeLink } from './funcs-html';
 import { IMention } from './mentions/MentionSanitizer';
 import { find } from './helpers/array';
 
+interface TableCellLineAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+}
+
+interface TableColAttributes {
+  width?: string | undefined;
+}
+
+interface ListAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+  list: ListType;
+}
+
 interface IOpAttributes {
   background?: string | undefined;
   color?: string | undefined;
@@ -21,7 +40,7 @@ interface IOpAttributes {
 
   code?: boolean | undefined;
 
-  list?: ListType;
+  list?: ListAttributes;
   blockquote?: boolean | undefined;
   'code-block'?: string | boolean | undefined;
   header?: number | undefined;
@@ -29,6 +48,11 @@ interface IOpAttributes {
   direction?: DirectionType;
   indent?: number | undefined;
   table?: string | undefined;
+  'table-cell-line'?: TableCellLineAttributes | undefined;
+  row?: string | undefined;
+  colspan?: string | undefined;
+  rowspan?: string | undefined;
+  'table-col'?: TableColAttributes | undefined;
 
   mentions?: boolean | undefined;
   mention?: IMention | undefined;
@@ -165,10 +189,11 @@ class OpAttributeSanitizer {
     }
 
     if (
-      list === ListType.Bullet ||
-      list === ListType.Ordered ||
-      list === ListType.Checked ||
-      list === ListType.Unchecked
+      list &&
+      (list!.list === ListType.Bullet ||
+        list!.list === ListType.Ordered ||
+        list!.list === ListType.Checked ||
+        list!.list === ListType.Unchecked)
     ) {
       cleanAttrs.list = list;
     }

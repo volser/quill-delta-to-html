@@ -50,6 +50,12 @@ exports.BlockGroup = BlockGroup;
 var ListGroup = (function () {
     function ListGroup(items) {
         this.items = items;
+        var headListItem = items[0];
+        if (headListItem &&
+            headListItem.item.op.attributes &&
+            headListItem.item.op.attributes.cell) {
+            this.headOp = headListItem.item.op;
+        }
     }
     return ListGroup;
 }());
@@ -64,23 +70,48 @@ var ListItem = (function () {
 }());
 exports.ListItem = ListItem;
 var TableGroup = (function () {
-    function TableGroup(rows) {
+    function TableGroup(rows, colGroup) {
         this.rows = rows;
+        this.colGroup = colGroup;
     }
     return TableGroup;
 }());
 exports.TableGroup = TableGroup;
+var TableColGroup = (function () {
+    function TableColGroup(cols) {
+        this.cols = cols;
+    }
+    return TableColGroup;
+}());
+exports.TableColGroup = TableColGroup;
+var TableCol = (function () {
+    function TableCol(item) {
+        this.item = item;
+    }
+    return TableCol;
+}());
+exports.TableCol = TableCol;
 var TableRow = (function () {
-    function TableRow(cells) {
+    function TableRow(cells, row) {
         this.cells = cells;
+        this.row = row;
     }
     return TableRow;
 }());
 exports.TableRow = TableRow;
 var TableCell = (function () {
-    function TableCell(item) {
-        this.item = item;
+    function TableCell(lines, attributes) {
+        this.lines = lines;
+        this.attrs = attributes;
     }
     return TableCell;
 }());
 exports.TableCell = TableCell;
+var TableCellLine = (function () {
+    function TableCellLine(item) {
+        this.item = item;
+        this.attrs = item.op.attributes['table-cell-line'];
+    }
+    return TableCellLine;
+}());
+exports.TableCellLine = TableCellLine;

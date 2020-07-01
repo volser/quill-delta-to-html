@@ -9,7 +9,8 @@ declare class DeltaInsertOp {
   isBlockAttribute(): boolean;
   isBlockquote(): boolean;
   isHeader(): boolean;
-  isTable(): boolean;
+  isTableCellLine(): boolean;
+  isTableCol(): boolean;
   isSameHeaderAs(op: DeltaInsertOp): boolean;
   hasSameAdiAs(op: DeltaInsertOp): boolean;
   hasSameIndentationAs(op: DeltaInsertOp): boolean;
@@ -26,7 +27,7 @@ declare class DeltaInsertOp {
   isUncheckedList(): boolean;
   isACheckList(): boolean;
   isSameListAs(op: DeltaInsertOp): boolean;
-  isSameTableRowAs(op: DeltaInsertOp): boolean;
+  isSameTableCellAs(op: DeltaInsertOp): boolean;
   isText(): boolean;
   isImage(): boolean;
   isFormula(): boolean;

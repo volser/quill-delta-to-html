@@ -23,7 +23,8 @@ class DeltaInsertOp {
     return (
       this.isBlockquote() ||
       this.isList() ||
-      this.isTable() ||
+      this.isTableCellLine() ||
+      this.isTableCol() ||
       this.isCodeBlock() ||
       this.isHeader() ||
       this.isBlockAttribute() ||
@@ -44,8 +45,12 @@ class DeltaInsertOp {
     return !!this.attributes.header;
   }
 
-  isTable(): boolean {
-    return !!this.attributes.table;
+  isTableCellLine(): boolean {
+    return !!this.attributes['table-cell-line'];
+  }
+
+  isTableCol(): boolean {
+    return !!this.attributes['table-col'];
   }
 
   isSameHeaderAs(op: DeltaInsertOp): boolean {
@@ -106,41 +111,71 @@ class DeltaInsertOp {
   }
 
   isOrderedList() {
-    return this.attributes.list === ListType.Ordered;
+    return (
+      !!this.attributes.list && this.attributes.list!.list === ListType.Ordered
+    );
   }
 
   isBulletList() {
-    return this.attributes.list === ListType.Bullet;
+    return (
+      !!this.attributes.list && this.attributes.list!.list === ListType.Bullet
+    );
   }
 
   isCheckedList() {
-    return this.attributes.list === ListType.Checked;
+    return (
+      !!this.attributes.list && this.attributes.list!.list === ListType.Checked
+    );
   }
 
   isUncheckedList() {
-    return this.attributes.list === ListType.Unchecked;
+    return (
+      !!this.attributes.list &&
+      this.attributes.list!.list === ListType.Unchecked
+    );
   }
 
   isACheckList() {
     return (
-      this.attributes.list == ListType.Unchecked ||
-      this.attributes.list === ListType.Checked
+      !!this.attributes.list &&
+      (this.attributes.list!.list == ListType.Unchecked ||
+        this.attributes.list!.list === ListType.Checked)
     );
   }
 
   isSameListAs(op: DeltaInsertOp): boolean {
     return (
       !!op.attributes.list &&
-      (this.attributes.list === op.attributes.list ||
+      (this.attributes.list!.list === op.attributes.list!.list ||
         (op.isACheckList() && this.isACheckList()))
     );
   }
 
-  isSameTableRowAs(op: DeltaInsertOp): boolean {
+  isSameTableCellAs(op: DeltaInsertOp): boolean {
     return (
-      !!op.isTable() &&
-      this.isTable() &&
-      this.attributes.table === op.attributes.table
+      (!!op.isTableCellLine() &&
+        this.isTableCellLine() &&
+        !!this.attributes['table-cell-line'] &&
+        !!op.attributes['table-cell-line'] &&
+        this.attributes['table-cell-line']!.cell ===
+          op.attributes['table-cell-line']!.cell) ||
+      (op.isList() &&
+        this.isTableCellLine() &&
+        !!this.attributes['table-cell-line'] &&
+        !!op.attributes['list'] &&
+        this.attributes['table-cell-line']!.cell ===
+          op.attributes['list']!.cell) ||
+      (op.isTableCellLine() &&
+        this.isList() &&
+        !!op.attributes['table-cell-line'] &&
+        !!this.attributes['list'] &&
+        op.attributes['table-cell-line']!.cell ===
+          this.attributes['list']!.cell) ||
+      (op.isList() &&
+        this.isList() &&
+        !!this.attributes['list'] &&
+        !!op.attributes['list'] &&
+        this.attributes['list']!.cell === op.attributes['list']!.cell)
     );
   }
 

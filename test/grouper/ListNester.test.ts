@@ -17,16 +17,16 @@ describe('ListNester', function () {
     it('should not nest different types of lists', function () {
       var ops = [
         new DeltaInsertOp('ordered list 1 item 1'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Ordered } }),
         new DeltaInsertOp('bullet list 1 item 1'),
-        new DeltaInsertOp('\n', { list: ListType.Bullet }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Bullet } }),
         new DeltaInsertOp('bullet list 1 item 2'),
-        new DeltaInsertOp('\n', { list: ListType.Bullet }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Bullet } }),
         new DeltaInsertOp('haha'),
         new DeltaInsertOp('\n'),
-        new DeltaInsertOp('\n', { list: ListType.Bullet }),
-        new DeltaInsertOp('\n', { list: ListType.Checked }),
-        new DeltaInsertOp('\n', { list: ListType.Unchecked }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Bullet } }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Checked } }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Unchecked } }),
       ];
 
       var groups = Grouper.pairOpsWithTheirBlock(ops);
@@ -51,19 +51,31 @@ describe('ListNester', function () {
     it('should nest if lists are same and later ones have higher indent', function () {
       var ops = [
         new DeltaInsertOp('item 1'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Ordered } }),
         new DeltaInsertOp('item 1a'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 1 }),
+        new DeltaInsertOp('\n', {
+          list: { list: ListType.Ordered },
+          indent: 1,
+        }),
         new DeltaInsertOp('item 1a-i'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 3 }),
+        new DeltaInsertOp('\n', {
+          list: { list: ListType.Ordered },
+          indent: 3,
+        }),
         new DeltaInsertOp('item 1b'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 1 }),
+        new DeltaInsertOp('\n', {
+          list: { list: ListType.Ordered },
+          indent: 1,
+        }),
         new DeltaInsertOp('item 2'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Ordered } }),
         new DeltaInsertOp('haha'),
         new DeltaInsertOp('\n'),
-        new DeltaInsertOp('\n', { list: ListType.Ordered, indent: 5 }),
-        new DeltaInsertOp('\n', { list: ListType.Bullet, indent: 4 }),
+        new DeltaInsertOp('\n', {
+          list: { list: ListType.Ordered },
+          indent: 5,
+        }),
+        new DeltaInsertOp('\n', { list: { list: ListType.Bullet }, indent: 4 }),
       ];
       var pairs = Grouper.pairOpsWithTheirBlock(ops);
 

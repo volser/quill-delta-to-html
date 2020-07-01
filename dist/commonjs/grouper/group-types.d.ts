@@ -1,4 +1,5 @@
 import { DeltaInsertOp } from './../DeltaInsertOp';
+import { IOpAttributes } from './../OpAttributeSanitizer';
 declare class InlineGroup {
   readonly ops: DeltaInsertOp[];
   constructor(ops: DeltaInsertOp[]);
@@ -16,6 +17,7 @@ declare class BlockGroup {
 }
 declare class ListGroup {
   items: ListItem[];
+  readonly headOp: DeltaInsertOp | undefined;
   constructor(items: ListItem[]);
 }
 declare class ListItem {
@@ -25,14 +27,30 @@ declare class ListItem {
 }
 declare class TableGroup {
   rows: TableRow[];
-  constructor(rows: TableRow[]);
+  colGroup: TableColGroup;
+  constructor(rows: TableRow[], colGroup: TableColGroup);
+}
+declare class TableColGroup {
+  cols: TableCol[];
+  constructor(cols: TableCol[]);
+}
+declare class TableCol {
+  item: BlockGroup;
+  constructor(item: BlockGroup);
 }
 declare class TableRow {
   cells: TableCell[];
-  constructor(cells: TableCell[]);
+  readonly row: string | undefined;
+  constructor(cells: TableCell[], row: string | undefined);
 }
 declare class TableCell {
+  lines: (TableCellLine | ListGroup)[];
+  readonly attrs: IOpAttributes | undefined;
+  constructor(lines: (TableCellLine | ListGroup)[], attributes: IOpAttributes);
+}
+declare class TableCellLine {
   readonly item: BlockGroup;
+  readonly attrs: IOpAttributes | undefined;
   constructor(item: BlockGroup);
 }
 declare type TDataGroup =
@@ -42,8 +60,11 @@ declare type TDataGroup =
   | ListItem
   | ListGroup
   | TableGroup
+  | TableColGroup
+  | TableCol
   | TableRow
-  | TableCell;
+  | TableCell
+  | TableCellLine;
 export {
   VideoItem,
   BlotBlock,
@@ -52,7 +73,10 @@ export {
   ListGroup,
   ListItem,
   TableGroup,
+  TableColGroup,
+  TableCol,
   TableRow,
   TableCell,
+  TableCellLine,
   TDataGroup,
 };

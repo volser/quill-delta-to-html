@@ -65,7 +65,7 @@ describe('DeltaInsertOp', function () {
       var op = new DeltaInsertOp('\n', {});
       assert.equal(op.isJustNewline(), true);
 
-      op = new DeltaInsertOp('\n\n ', { list: ListType.Ordered });
+      op = new DeltaInsertOp('\n\n ', { list: { list: ListType.Ordered } });
       assert.equal(op.isJustNewline(), false);
     });
   });
@@ -75,73 +75,73 @@ describe('DeltaInsertOp', function () {
       var op = new DeltaInsertOp('\n', {});
       assert.equal(op.isList(), false);
 
-      op = new DeltaInsertOp('fds ', { list: ListType.Ordered });
+      op = new DeltaInsertOp('fds ', { list: { list: ListType.Ordered } });
       assert.equal(op.isList(), true);
 
-      op = new DeltaInsertOp('fds ', { list: ListType.Unchecked });
+      op = new DeltaInsertOp('fds ', { list: { list: ListType.Unchecked } });
       assert.equal(op.isList(), true);
     });
   });
 
   describe('isBulletList()', function () {
     it('should return true if op is a bullet list', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Bullet } });
       assert.equal(op.isBulletList(), true);
 
-      op = new DeltaInsertOp('fds ', { list: ListType.Ordered });
+      op = new DeltaInsertOp('fds ', { list: { list: ListType.Ordered } });
       assert.equal(op.isBulletList(), false);
     });
   });
 
   describe('isOrderedList()', function () {
     it('should return true if op is an ordered list', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Bullet } });
       assert.equal(op.isOrderedList(), false);
 
-      op = new DeltaInsertOp('fds ', { list: ListType.Ordered });
+      op = new DeltaInsertOp('fds ', { list: { list: ListType.Ordered } });
       assert.equal(op.isOrderedList(), true);
     });
   });
 
   describe('isCheckedList()', function () {
     it('should return true if op is an checked list', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Unchecked });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Unchecked } });
       assert.equal(op.isCheckedList(), false);
 
-      op = new DeltaInsertOp('fds ', { list: ListType.Checked });
+      op = new DeltaInsertOp('fds ', { list: { list: ListType.Checked } });
       assert.equal(op.isCheckedList(), true);
     });
   });
 
   describe('isUncheckedList()', function () {
     it('should return true if op is an unchecked list', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Bullet } });
       assert.equal(op.isUncheckedList(), false);
 
-      op = new DeltaInsertOp('fds ', { list: ListType.Unchecked });
+      op = new DeltaInsertOp('fds ', { list: { list: ListType.Unchecked } });
       assert.equal(op.isUncheckedList(), true);
     });
   });
 
   describe('isSameListAs()', function () {
     it('should return true if op list type same as the comparison', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
-      var op2 = new DeltaInsertOp('ds', { list: ListType.Bullet });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Bullet } });
+      var op2 = new DeltaInsertOp('ds', { list: { list: ListType.Bullet } });
       assert.equal(op.isSameListAs(op2), true);
 
-      var op3 = new DeltaInsertOp('fds ', { list: ListType.Ordered });
+      var op3 = new DeltaInsertOp('fds ', { list: { list: ListType.Ordered } });
       assert.equal(op.isSameListAs(op3), false);
     });
   });
 
   describe('isText()', function () {
     it('should correctly identify insert type', function () {
-      var op = new DeltaInsertOp('\n', { list: ListType.Bullet });
+      var op = new DeltaInsertOp('\n', { list: { list: ListType.Bullet } });
       assert.equal(op.isVideo(), false);
       assert.equal(op.isText(), true);
 
       op = new DeltaInsertOp(new InsertDataQuill(DataType.Image, 'd'), {
-        list: ListType.Ordered,
+        list: { list: ListType.Ordered },
       });
       assert.equal(op.isImage(), true);
       assert.equal(op.isText(), false);

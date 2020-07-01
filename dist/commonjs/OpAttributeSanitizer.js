@@ -94,10 +94,11 @@ var OpAttributeSanitizer = (function () {
         if (script === value_types_1.ScriptType.Sub || value_types_1.ScriptType.Super === script) {
             cleanAttrs.script = script;
         }
-        if (list === value_types_1.ListType.Bullet ||
-            list === value_types_1.ListType.Ordered ||
-            list === value_types_1.ListType.Checked ||
-            list === value_types_1.ListType.Unchecked) {
+        if (list &&
+            (list.list === value_types_1.ListType.Bullet ||
+                list.list === value_types_1.ListType.Ordered ||
+                list.list === value_types_1.ListType.Checked ||
+                list.list === value_types_1.ListType.Unchecked)) {
             cleanAttrs.list = list;
         }
         if (Number(header)) {

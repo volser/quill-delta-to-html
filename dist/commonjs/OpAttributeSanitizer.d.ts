@@ -1,5 +1,21 @@
 import { ListType, AlignType, DirectionType, ScriptType } from './value-types';
 import { IMention } from './mentions/MentionSanitizer';
+interface TableCellLineAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+}
+interface TableColAttributes {
+  width?: string | undefined;
+}
+interface ListAttributes {
+  row?: string | undefined;
+  cell?: string | undefined;
+  rowspan?: string | undefined;
+  colspan?: string | undefined;
+  list: ListType;
+}
 interface IOpAttributes {
   background?: string | undefined;
   color?: string | undefined;
@@ -13,7 +29,7 @@ interface IOpAttributes {
   strike?: boolean | undefined;
   script?: ScriptType;
   code?: boolean | undefined;
-  list?: ListType;
+  list?: ListAttributes;
   blockquote?: boolean | undefined;
   'code-block'?: string | boolean | undefined;
   header?: number | undefined;
@@ -21,6 +37,11 @@ interface IOpAttributes {
   direction?: DirectionType;
   indent?: number | undefined;
   table?: string | undefined;
+  'table-cell-line'?: TableCellLineAttributes | undefined;
+  row?: string | undefined;
+  colspan?: string | undefined;
+  rowspan?: string | undefined;
+  'table-col'?: TableColAttributes | undefined;
   mentions?: boolean | undefined;
   mention?: IMention | undefined;
   target?: string | undefined;

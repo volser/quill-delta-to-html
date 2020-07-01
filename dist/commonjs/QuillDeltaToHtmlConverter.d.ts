@@ -7,6 +7,8 @@ import {
   TableGroup,
   TableRow,
   TableCell,
+  TableCol,
+  TableCellLine,
 } from './grouper/group-types';
 import { GroupType } from './value-types';
 import { IOpAttributeSanitizerOptions } from './OpAttributeSanitizer';
@@ -38,8 +40,10 @@ declare class QuillDeltaToHtmlConverter {
   _renderList(list: ListGroup): string;
   _renderListItem(li: ListItem): string;
   _renderTable(table: TableGroup): string;
+  _renderTableCol(col: TableCol): string;
   _renderTableRow(row: TableRow): string;
   _renderTableCell(cell: TableCell): string;
+  _renderTableCellLine(line: TableCellLine): string;
   _renderBlock(bop: DeltaInsertOp, ops: DeltaInsertOp[]): string;
   _renderInlines(ops: DeltaInsertOp[], isInlineGroup?: boolean): string;
   _renderInline(op: DeltaInsertOp, contextOp: DeltaInsertOp | null): any;

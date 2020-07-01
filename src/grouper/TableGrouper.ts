@@ -1,15 +1,23 @@
 import {
   TDataGroup,
   TableGroup,
+  TableColGroup,
+  TableCol,
   BlockGroup,
   TableRow,
   TableCell,
+  TableCellLine,
+  ListGroup,
 } from './group-types';
 import { groupConsecutiveElementsWhile } from '../helpers/array';
+import { isArray } from 'util';
+import { IOpAttributes } from '../OpAttributeSanitizer';
+import { DeltaInsertOp } from '../DeltaInsertOp';
 
 export class TableGrouper {
   group(groups: TDataGroup[]): TDataGroup[] {
-    var tableBlocked = this.convertTableBlocksToTableGroups(groups);
+    var tableColBlocked = this.convertTableColBlocksToTableColGroup(groups);
+    var tableBlocked = this.convertTableBlocksToTableGroups(tableColBlocked);
     return tableBlocked;
   }
 
@@ -20,23 +28,102 @@ export class TableGrouper {
       items,
       (g: TDataGroup, gPrev: TDataGroup) => {
         return (
-          g instanceof BlockGroup &&
-          gPrev instanceof BlockGroup &&
-          g.op.isTable() &&
-          gPrev.op.isTable()
+          (g instanceof BlockGroup &&
+            gPrev instanceof BlockGroup &&
+            g.op.isTableCellLine() &&
+            gPrev.op.isTableCellLine()) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof BlockGroup &&
+            g.headOp!.attributes!.cell &&
+            gPrev.op.isTableCellLine()) ||
+          (g instanceof BlockGroup &&
+            gPrev instanceof ListGroup &&
+            g.op.isTableCellLine() &&
+            gPrev.headOp!.attributes!.cell) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof ListGroup &&
+            !!g.headOp &&
+            !!gPrev.headOp &&
+            g.headOp!.attributes!.cell &&
+            gPrev.headOp!.attributes!.cell)
         );
       }
     );
 
-    return grouped.map((item: TDataGroup | BlockGroup[]) => {
-      if (!Array.isArray(item)) {
-        if (item instanceof BlockGroup && item.op.isTable()) {
-          return new TableGroup([new TableRow([new TableCell(item)])]);
+    let tableColGroup: TableColGroup;
+    return grouped.reduce(
+      (result: TDataGroup[], item: TDataGroup | BlockGroup[]) => {
+        if (!Array.isArray(item)) {
+          if (item instanceof BlockGroup && item.op.isTableCellLine()) {
+            result.push(
+              new TableGroup(
+                [
+                  new TableRow(
+                    [
+                      new TableCell(
+                        [new TableCellLine(item)],
+                        item.op.attributes
+                      ),
+                    ],
+                    item.op.attributes.row
+                  ),
+                ],
+                tableColGroup ||
+                  new TableColGroup([
+                    new TableCol(
+                      new BlockGroup(
+                        new DeltaInsertOp('\n', {
+                          'table-col': { width: '150' },
+                        }),
+                        []
+                      )
+                    ),
+                  ])
+              )
+            );
+          } else if (item instanceof ListGroup && !!item.headOp) {
+            result.push(
+              new TableGroup(
+                [
+                  new TableRow(
+                    [new TableCell([item], item.headOp.attributes)],
+                    item.headOp.attributes.row
+                  ),
+                ],
+                tableColGroup ||
+                  new TableColGroup([
+                    new TableCol(
+                      new BlockGroup(
+                        new DeltaInsertOp('\n', {
+                          'table-col': { width: '150' },
+                        }),
+                        []
+                      )
+                    ),
+                  ])
+              )
+            );
+          } else if (item instanceof TableColGroup) {
+            tableColGroup = item;
+          } else {
+            result.push(item);
+          }
+
+          return result;
         }
-        return item;
-      }
-      return new TableGroup(this.convertTableBlocksToTableRows(item));
-    });
+
+        result.push(
+          new TableGroup(
+            this.convertTableBlocksToTableRows(
+              this.convertTableBlocksToTableCells(item)
+            ),
+            tableColGroup
+          )
+        );
+        return result;
+      },
+      []
+    );
   }
 
   private convertTableBlocksToTableRows(items: TDataGroup[]): TableRow[] {
@@ -44,19 +131,120 @@ export class TableGrouper {
       items,
       (g: TDataGroup, gPrev: TDataGroup) => {
         return (
-          g instanceof BlockGroup &&
-          gPrev instanceof BlockGroup &&
-          g.op.isTable() &&
-          gPrev.op.isTable() &&
-          g.op.isSameTableRowAs(gPrev.op)
+          g instanceof TableCell &&
+          gPrev instanceof TableCell &&
+          (g.attrs ? g.attrs.row : undefined) ===
+            (gPrev.attrs ? gPrev.attrs.row : undefined)
         );
       }
     );
-    return grouped.map((item: BlockGroup | BlockGroup[]) => {
+
+    return grouped.map((item: TableCell | TableCell[]) => {
+      let row;
+      if (isArray(item)) {
+        const firstCell = item[0];
+        if (firstCell) {
+          row = firstCell.attrs ? firstCell.attrs.row : undefined;
+        }
+      } else {
+        if (item.attrs) {
+          row = item.attrs.row;
+        } else {
+          row = undefined;
+        }
+      }
+
       return new TableRow(
-        Array.isArray(item)
-          ? item.map((it) => new TableCell(it))
-          : [new TableCell(item)]
+        Array.isArray(item) ? item.map((it) => it) : [item],
+        row
+      );
+    });
+  }
+
+  private convertTableBlocksToTableCells(items: TDataGroup[]): TableCell[] {
+    var grouped = groupConsecutiveElementsWhile(
+      items,
+      (g: TDataGroup, gPrev: TDataGroup) => {
+        return (
+          (g instanceof BlockGroup &&
+            gPrev instanceof BlockGroup &&
+            g.op.isTableCellLine() &&
+            gPrev.op.isTableCellLine() &&
+            g.op.isSameTableCellAs(gPrev.op)) ||
+          (g instanceof BlockGroup &&
+            gPrev instanceof ListGroup &&
+            g.op.isTableCellLine() &&
+            !!gPrev.headOp &&
+            g.op.isSameTableCellAs(gPrev.headOp)) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof BlockGroup &&
+            gPrev.op.isTableCellLine() &&
+            !!g.headOp &&
+            g.headOp.isSameTableCellAs(gPrev.op)) ||
+          (g instanceof ListGroup &&
+            gPrev instanceof ListGroup &&
+            !!g.headOp &&
+            !!gPrev.headOp &&
+            g.headOp.isSameTableCellAs(gPrev.headOp))
+        );
+      }
+    );
+
+    return grouped.map(
+      (item: (BlockGroup | ListGroup) | (BlockGroup | ListGroup)[]) => {
+        const head = isArray(item) ? item[0] : item;
+        let attrs: IOpAttributes;
+        if (head instanceof BlockGroup) {
+          attrs = head.op.attributes;
+        } else {
+          attrs = head.headOp!.attributes;
+        }
+
+        let children: (TableCellLine | ListGroup)[];
+        if (isArray(item)) {
+          children = item.map((it) => {
+            return it instanceof BlockGroup ? new TableCellLine(it) : it;
+          });
+        } else {
+          if (item instanceof BlockGroup) {
+            children = [new TableCellLine(item)];
+          } else {
+            children = [item];
+          }
+        }
+
+        return new TableCell(children, attrs);
+      }
+    );
+  }
+
+  private convertTableColBlocksToTableColGroup(
+    items: TDataGroup[]
+  ): TDataGroup[] {
+    var grouped = groupConsecutiveElementsWhile(
+      items,
+      (g: TDataGroup, gPrev: TDataGroup) => {
+        return (
+          g instanceof BlockGroup &&
+          gPrev instanceof BlockGroup &&
+          g.op.isTableCol() &&
+          gPrev.op.isTableCol()
+        );
+      }
+    );
+
+    return grouped.map((item: BlockGroup | BlockGroup[]) => {
+      if (!Array.isArray(item)) {
+        if (item instanceof BlockGroup && item.op.isTableCol()) {
+          return new TableColGroup([new TableCol(item)]);
+        }
+        return item;
+      }
+
+      return new TableColGroup(
+        isArray(item)
+          ? item.map((it) => new TableCol(it))
+          : [new TableCol(item)]
       );
     });
   }
