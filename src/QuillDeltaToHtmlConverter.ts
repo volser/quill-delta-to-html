@@ -253,24 +253,27 @@ class QuillDeltaToHtmlConverter {
 
   _renderTable(table: TableGroup): string {
     const tableColGroup: TableColGroup = table.colGroup;
-    const tableWidth: number = tableColGroup.cols.reduce(
-      (result: number, col: TableCol) => {
-        if (col.item.op.attributes['table-col']) {
-          result += parseInt(
-            col.item.op.attributes['table-col']!.width || '0',
-            10
-          );
-        }
-        return result;
-      },
-      0
-    );
+    let tableWidth: number = 0;
+    if (tableColGroup && tableColGroup.cols) {
+      tableWidth = tableColGroup.cols.reduce(
+        (result: number, col: TableCol) => {
+          if (col.item.op.attributes['table-col']) {
+            result += parseInt(
+              col.item.op.attributes['table-col']!.width || '0',
+              10
+            );
+          }
+          return result;
+        },
+        0
+      );
+    }
 
     return (
       makeStartTag('div', [{ key: 'class', value: 'clickup-table-view' }]) +
       makeStartTag('table', [
         { key: 'class', value: 'clickup-table' },
-        { key: 'style', value: `width: ${tableWidth}px` },
+        { key: 'style', value: !!tableWidth ? `width: ${tableWidth}px` : '' },
       ]) +
       makeStartTag('colgroup') +
       tableColGroup.cols
