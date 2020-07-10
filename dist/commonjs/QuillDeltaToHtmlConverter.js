@@ -189,16 +189,19 @@ var QuillDeltaToHtmlConverter = (function () {
     QuillDeltaToHtmlConverter.prototype._renderTable = function (table) {
         var _this = this;
         var tableColGroup = table.colGroup;
-        var tableWidth = tableColGroup.cols.reduce(function (result, col) {
-            if (col.item.op.attributes['table-col']) {
-                result += parseInt(col.item.op.attributes['table-col'].width || '0', 10);
-            }
-            return result;
-        }, 0);
+        var tableWidth = 0;
+        if (tableColGroup && tableColGroup.cols) {
+            tableWidth = tableColGroup.cols.reduce(function (result, col) {
+                if (col.item.op.attributes['table-col']) {
+                    result += parseInt(col.item.op.attributes['table-col'].width || '0', 10);
+                }
+                return result;
+            }, 0);
+        }
         return (funcs_html_1.makeStartTag('div', [{ key: 'class', value: 'clickup-table-view' }]) +
             funcs_html_1.makeStartTag('table', [
                 { key: 'class', value: 'clickup-table' },
-                { key: 'style', value: "width: " + tableWidth + "px" },
+                { key: 'style', value: !!tableWidth ? "width: " + tableWidth + "px" : '' },
             ]) +
             funcs_html_1.makeStartTag('colgroup') +
             tableColGroup.cols
